@@ -1,0 +1,33 @@
+{
+  "name": "ai-collective-content-lab",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Content lab for The AI Collective. Make Instagram posts (hero image + editorial overlay in the AI Collective identity) and short videos (reels) with Remotion, from inside Claude Code.",
+  "license": "MIT",
+  "scripts": {
+    "setup": "bash scripts/setup.sh",
+    "studio": "remotion studio",
+    "post": "node scripts/render-post.mjs",
+    "render": "remotion render Reel out/reel.mp4",
+    "video": "node scripts/render-video.mjs",
+    "image": "node scripts/generate-image.mjs",
+    "clip": "node scripts/generate-clip.mjs",
+    "browser": "remotion browser ensure"
+  },
+  "dependencies": {
+    "@fal-ai/client": "^1.10.1",
+    "@remotion/bundler": "4.0.483",
+    "@remotion/cli": "4.0.483",
+    "@remotion/google-fonts": "4.0.483",
+    "@remotion/renderer": "4.0.483",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "4.0.483",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "typescript": "^5.6.3"
+  }
+}

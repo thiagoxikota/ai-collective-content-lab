@@ -1,0 +1,19 @@
+# Secrets (never commit a real key)
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+
+# Render outputs and generated assets
+out/
+assets/generated/*
+!assets/generated/.gitkeep
+
+# Remotion cache / build
+.remotion/
+
+# OS / editor noise
+.DS_Store
+*.log
