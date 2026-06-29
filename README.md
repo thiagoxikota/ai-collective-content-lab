@@ -1,26 +1,33 @@
 # AI Collective Content Lab
 
-Faca posts do Instagram com a identidade visual do **The AI Collective**, direto
-do Claude Code. Pega uma foto, escreve a manchete, e sai a arte pronta. Tambem
-gera imagens com IA e monta reels.
+Um jeito simples de **criar conteudo com IA**: voce joga uma foto, escreve uma
+frase, e sai uma arte de post, carrossel ou reel com a identidade do **The AI
+Collective**. De graca e sem programar.
 
-Feito para os chapters do The AI Collective (comecou no de Florianopolis).
-Plateia mista, gente que nao programa inclusa.
+Quer ir alem? Da pra GERAR a imagem de fundo (ou um clipe) por IA, e da pra deixar
+tudo com a SUA marca editando um arquivo so (veja "Como trocar de marca" abaixo).
+
+Feito para os chapters do The AI Collective (comecou no de Florianopolis), pra
+plateia mista, quem nao programa inclusa.
 
 ---
 
-## Jeito mais facil: o editor visual
+## Comece em 3 passos (sem chave, sem codigo)
 
 ```bash
-npm run ui
+./scripts/setup.sh   # 1. instala tudo (so na primeira vez)
+npm run ui           # 2. abre o editor no navegador
 ```
 
-Abre uma pagina no navegador. Solte uma imagem, escreva a manchete, veja a previa
-ao vivo e baixe o PNG. Sem codigo, sem chave.
+**3.** Solte uma foto, escreva a manchete, clique em **Baixar**.
 
-- Arraste a foto na previa pra enquadrar. Zoom e "escurecer fundo" em sliders.
-- A fonte da manchete se ajusta sozinha pra caber (nunca estoura).
-- Carrossel: adicione slides, alterne entre "Capa" e "Conteudo" (titulo + corpo de texto), e baixe tudo num .zip.
+Pronto: um PNG 1080x1350 com a cara do The AI Collective. Posts nao precisam de
+chave de API nenhuma (o render e local, na sua maquina).
+
+No editor voce ainda pode:
+- Arrastar a foto na previa pra enquadrar (ou usar os sliders de posicao e zoom).
+- Contar com o auto-fit: a manchete encolhe sozinha pra caber, nunca estoura.
+- Montar carrossel: adicione slides, alterne entre "Capa" e "Conteudo", e baixe tudo num .zip.
 
 ---
 
@@ -112,21 +119,39 @@ pesquisa: og:image, CSS e favicon de aicollective.com, mais a voz/numeros do
 `social-strategy.md` do chapter. O kit oficial (vetores do logo, variantes) fica
 em https://www.aicollective.com/press. Para producao seria, peca os vetores pra HQ.
 
-## Como trocar de marca (white-label / rebrand)
+## Como trocar de marca (deixe com a sua cara)
 
-O motor e neutro. A marca do AI Collective e so o exemplo padrao. Para usar a sua:
+O motor e neutro. A marca do AI Collective e so o exemplo padrao. Tudo o que
+define "a marca" (cores, fontes, logo, @ e etiqueta) vive em UM arquivo:
+**`src/brand.config.mjs`**. Abra ele e mude o que quiser:
 
-**1.** Edite **`src/brand.config.mjs`** (um arquivo). La ficam, num lugar so:
-   - `BRAND.colors` (o laranja de acento, o fundo escuro, etc.)
-   - `BRAND.fonts` (nomes das fontes)
-   - `BRAND.logoPath` (o caminho do SVG do seu logo)
-   - `CHAPTER.handle` e `CHAPTER.label` (o @ e a etiqueta do topo / marca do video)
+```js
+export const BRAND = {
+  colors: {
+    accent: "#FF630D",   // <- a cor de destaque (troque pela sua)
+    bg: "#0C0A09",       // <- o fundo escuro
+    ink: "#FFFFFF",      // <- a cor do texto sobre a foto
+    // ...
+  },
+  fonts: { display: "Source Serif 4", body: "Open Sans" }, // <- suas fontes
+  logoPath: "M130.8,...",  // <- o path (d="...") do SVG do seu logo
+};
 
-**2.** Se trocar a FONTE, troque tambem os dois nomes em:
-   - `ui/index.html` (a tag `<link>` do Google Fonts, no topo)
-   - `src/brand.tsx` (os dois `loadFont` do `@remotion/google-fonts`)
+export const CHAPTER = {
+  handle: "@aicollectivefloripa",        // <- o @ que aparece no post
+  label: "AI Collective Florianópolis",  // <- a etiqueta do topo e a marca do video
+};
+```
 
-So isso. Posts, carrossel, reels e o editor passam a sair com a sua marca.
+**Teste em 30 segundos:** troque o `accent` pela sua cor, salve, rode `npm run ui`,
+e o editor inteiro (e os posts) ja saem na cor nova.
+
+**Se trocar a FONTE**, troque tambem os nomes em dois lugares (so uma vez):
+- `ui/index.html`: a tag `<link>` do Google Fonts, la no topo.
+- `src/brand.tsx`: os dois `loadFont` do `@remotion/google-fonts`.
+
+So isso. Posts, carrossel, reels e o editor passam a sair com a sua marca. Nao
+precisa cacar cor ou texto espalhado pelo codigo: e sempre esse arquivo.
 
 **Regra de copy (do chapter):** lidere com a coisa mais ambiciosa E verdadeira,
 nunca a burocratica. Numero: piso publicado (70k+), nunca o teto. Passe toda

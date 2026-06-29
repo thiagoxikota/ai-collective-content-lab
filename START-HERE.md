@@ -89,4 +89,16 @@ O video sai em `out/`.
 
 ---
 
+## Passo 6 (opcional). Deixe com a sua cara
+
+A marca (cores, fontes, logo, @) vive num arquivo so: `src/brand.config.mjs`.
+
+Abra ele, troque a cor de destaque (`accent`) e o `@` (`CHAPTER.handle`), salve.
+
+Rode `npm run ui` de novo: o editor e os posts ja saem na sua marca.
+
+Detalhes (fontes, logo) na secao **Como trocar de marca** do `README.md`.
+
+---
+
 Travou? Abra o `README.md`, secao **Troubleshooting**.
