@@ -6,9 +6,10 @@
 //   node scripts/generate-image.mjs "logo minimalista" --aspect square
 //   node scripts/generate-image.mjs "banner" --aspect horizontal --model fal-ai/flux/dev
 import { parseArgs } from "node:util";
-import { loadEnv } from "./lib/env.mjs";
+import { loadEnv, installErrorHandler } from "./lib/env.mjs";
 import { getProvider } from "./lib/providers/index.mjs";
 
+installErrorHandler();
 loadEnv();
 
 const { values, positionals } = parseArgs({

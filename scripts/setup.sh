@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Setup do AI Image & Video Lab. Idempotente: pode rodar de novo sem medo.
+# Setup do AI Collective Content Lab. Idempotente: pode rodar de novo sem medo.
 set -e
 
 cd "$(dirname "$0")/.."
@@ -8,7 +8,7 @@ bold=$(printf '\033[1m'); green=$(printf '\033[1;32m'); yellow=$(printf '\033[1;
 red=$(printf '\033[1;31m'); reset=$(printf '\033[0m'); line="------------------------------------------------------------"
 
 echo ""
-echo "${bold}AI Image & Video Lab  .  setup${reset}"
+echo "${bold}AI Collective Content Lab  .  setup${reset}"
 echo "$line"
 
 # 1. Node
@@ -47,10 +47,13 @@ npx remotion browser ensure || echo "${yellow}aviso${reset}  baixa sozinho no pr
 # 5. Proximo passo
 echo ""
 echo "$line"
-echo "${bold}Tudo pronto.${reset}  Abra a pasta no Claude Code e diga:"
+echo "${bold}Tudo pronto.${reset}  Jeito mais facil (sem codigo, sem chave):"
 echo ""
-echo "   ${bold}\"cria um post sobre o primeiro encontro do chapter\"${reset}"
+echo "   ${bold}npm run ui${reset}"
 echo ""
+echo "Abre o editor no navegador: solte uma foto, escreva a manchete, baixe o PNG."
+echo ""
+echo "Prefere o Claude Code? Abra a pasta e diga: ${bold}\"cria um post sobre o evento\"${reset}"
 echo "Posts nao precisam de chave. O PNG sai em ${bold}out/${reset}."
 echo ""
 echo "${bold}Opcional${reset} (so para gerar a imagem de fundo com IA):"

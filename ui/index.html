@@ -6,9 +6,13 @@
 <title>Editor de posts . The AI Collective</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<!-- Brand fonts. To rebrand the typeface, change these names AND BRAND.fonts in src/brand.config.mjs. -->
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@500;600;700;800&family=Source+Serif+4:wght@800&display=swap" rel="stylesheet" />
+<!-- Brand tokens (colors, logo, scrims, sizes, chapter). Single source of truth: src/brand.config.mjs -->
+<script src="/brand.js"></script>
 <style>
   :root {
+    /* Fallbacks; the real values are applied from /brand.js at boot. */
     --orange: #FF630D;
     --bg: #0C0A09;
     --panel: #1c1917;
@@ -16,6 +20,9 @@
     --line: #3a3531;
     --ink: #ffffff;
     --muted: #a8a29e;
+    --ph: #938d86; /* placeholder, kept >= 4.5:1 on --panel2 */
+    --cover-hl: 90px;
+    --content-hl: 64px;
     --sans: "Open Sans", system-ui, sans-serif;
     --serif: "Source Serif 4", Georgia, serif;
   }
@@ -45,7 +52,7 @@
   .postnode .hero { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; cursor: grab; }
   .postnode .hero:active { cursor: grabbing; }
   .postnode .darken { position: absolute; inset: 0; background: var(--bg); pointer-events: none; }
-  .postnode .placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #6b6560; font-size: 44px; text-align: center; padding: 0 80px; }
+  .postnode .placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #8b857f; font-size: 44px; text-align: center; padding: 0 80px; }
   .postnode .scrim { position: absolute; inset: 0; pointer-events: none; }
   .postnode .topbar { position: absolute; top: 0; left: 0; right: 0; padding: 48px 60px; display: flex; justify-content: space-between; align-items: center; pointer-events: none; }
   .postnode .label { color: var(--ink); font-size: 22px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; text-shadow: 0 1px 8px rgba(0,0,0,0.5); }
@@ -53,8 +60,8 @@
   .postnode .chip { display: inline-flex; align-items: center; gap: 16px; margin-bottom: 28px; background: rgba(12,10,9,0.55); border-radius: 999px; padding: 14px 26px 14px 16px; }
   .postnode .chip .handle { color: var(--ink); font-size: 31px; font-weight: 700; }
   .postnode .hl { margin: 0; font-family: var(--serif); font-weight: 800; color: var(--ink); text-shadow: 0 3px 22px rgba(0,0,0,0.6); }
-  .postnode.cover .hl { font-size: 90px; line-height: 1.0; letter-spacing: -1px; }
-  .postnode.content .hl { font-size: 64px; line-height: 1.05; letter-spacing: -0.5px; }
+  .postnode.cover .hl { font-size: var(--cover-hl); line-height: 1.0; letter-spacing: -1px; }
+  .postnode.content .hl { font-size: var(--content-hl); line-height: 1.05; letter-spacing: -0.5px; }
   .postnode .accent-block { display: block; color: var(--orange); }
   .postnode .accent-inline { color: var(--orange); }
   .postnode .sub { display: flex; align-items: flex-start; gap: 16px; margin-top: 28px; max-width: 92%; }
@@ -66,13 +73,18 @@
 
   .controls { order: 1; padding: 28px; max-width: 760px; }
   .step { border: 1px solid var(--line); border-radius: 14px; padding: 22px; margin-bottom: 22px; background: var(--panel); }
-  .step h3 { margin: 0 0 16px; font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 12px; }
-  .step h3 .n { width: 28px; height: 28px; border-radius: 50%; background: var(--orange); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 800; }
+  .step h3, .step > summary { margin: 0 0 16px; font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 12px; }
+  details.step > summary { margin-bottom: 0; cursor: pointer; list-style: none; }
+  details.step[open] > summary { margin-bottom: 16px; }
+  details.step > summary::-webkit-details-marker { display: none; }
+  details.step > summary .chev { margin-left: auto; color: var(--muted); font-weight: 700; }
+  .step h3 .n, .step > summary .n { width: 28px; height: 28px; border-radius: 50%; background: var(--orange); color: var(--bg); display: inline-flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 800; }
   label { display: block; font-size: 14px; font-weight: 700; color: var(--muted); margin: 16px 0 7px; }
   input[type=text], textarea { width: 100%; background: var(--panel2); border: 1px solid var(--line); color: var(--ink); border-radius: 10px; padding: 13px 14px; font-family: var(--sans); font-size: 16px; line-height: 1.35; }
   textarea { resize: vertical; min-height: 64px; }
-  input::placeholder, textarea::placeholder { color: #6b6560; }
-  input:focus, textarea:focus { outline: none; border-color: var(--orange); box-shadow: 0 0 0 3px rgba(255,99,13,0.25); }
+  input::placeholder, textarea::placeholder { color: var(--ph); }
+  input:focus, textarea:focus, #drop:focus-visible, button:focus-visible { outline: none; border-color: var(--orange); box-shadow: 0 0 0 3px rgba(255,99,13,0.45); }
+  #drop:focus-visible { border-radius: 12px; }
   input[type=range] { width: 100%; accent-color: var(--orange); margin-top: 6px; }
   .hintline { font-size: 13px; color: var(--muted); margin-top: 10px; }
   .accent-orange { color: var(--orange); font-weight: 700; }
@@ -86,7 +98,7 @@
 
   .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; margin-bottom: 6px; }
   .seg button { background: var(--panel2); color: var(--muted); border: none; padding: 11px 20px; font-family: var(--sans); font-weight: 800; font-size: 15px; cursor: pointer; }
-  .seg button.active { background: var(--orange); color: #fff; }
+  .seg button[aria-pressed="true"] { background: var(--orange); color: var(--bg); }
 
   .row { display: flex; gap: 16px; flex-wrap: wrap; }
   .row > div { flex: 1; min-width: 150px; }
@@ -95,13 +107,13 @@
 
   .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
   .tab { padding: 9px 14px; border-radius: 9px; border: 1px solid var(--line); background: var(--panel2); color: var(--ink); cursor: pointer; font-weight: 700; font-size: 14px; }
-  .tab.active { border-color: var(--orange); background: rgba(255,99,13,0.14); }
+  .tab[aria-selected="true"] { border-color: var(--orange); background: rgba(255,99,13,0.18); box-shadow: inset 3px 0 0 var(--orange); font-weight: 800; }
   .tab.add { border-style: dashed; color: var(--muted); }
   .tab small { color: var(--muted); font-weight: 600; }
 
   button.primary, button.ghost { font-family: var(--sans); font-weight: 800; font-size: 16px; border-radius: 11px; padding: 15px 18px; cursor: pointer; border: 1px solid var(--line); }
-  button.primary { background: var(--orange); color: #fff; border-color: var(--orange); width: 100%; }
-  button.primary:disabled { opacity: 0.45; cursor: not-allowed; }
+  button.primary { background: var(--orange); color: var(--bg); border-color: var(--orange); width: 100%; }
+  button.primary:disabled { opacity: 0.55; cursor: not-allowed; }
   button.ghost { background: var(--panel2); color: var(--ink); width: 100%; margin-top: 10px; }
   button.danger { background: none; border: 1px solid var(--line); color: var(--muted); cursor: pointer; font-size: 14px; font-weight: 700; padding: 9px 14px; border-radius: 9px; margin-top: 10px; }
   #status { margin-top: 12px; font-size: 14px; min-height: 20px; }
@@ -120,62 +132,72 @@
     <div class="controls">
       <div class="step">
         <h3><span class="n">1</span> Imagem de fundo</h3>
-        <div id="drop">
+        <div id="drop" role="button" tabindex="0" aria-label="Escolher imagem de fundo (Enter para abrir, ou arraste uma foto)">
           <strong>Solte uma imagem aqui</strong>
           <small>ou clique para escolher</small>
         </div>
         <input id="file" type="file" accept="image/*" aria-label="Imagem de fundo" hidden />
-        <div class="hintline">Arraste a foto na previa pra enquadrar. Dica do AIC: foto de gente, nao logo solto.</div>
-        <label>Zoom</label>
-        <input id="zoom" type="range" min="1" max="2.5" step="0.05" value="1" aria-label="Zoom" />
-        <label>Escurecer fundo (pra texto legivel em foto clara)</label>
-        <input id="darken" type="range" min="0" max="0.7" step="0.05" value="0" aria-label="Escurecer fundo" />
+        <div class="hintline">Arraste a foto na previa pra enquadrar (ou use os controles abaixo). Dica do AIC: foto de gente, nao logo solto.</div>
+        <label for="zoom">Zoom</label>
+        <input id="zoom" type="range" min="1" max="2.5" step="0.05" value="1" />
+        <div class="row">
+          <div>
+            <label for="posx">Posicao horizontal</label>
+            <input id="posx" type="range" min="0" max="100" step="1" value="50" />
+          </div>
+          <div>
+            <label for="posy">Posicao vertical</label>
+            <input id="posy" type="range" min="0" max="100" step="1" value="50" />
+          </div>
+        </div>
+        <label for="darken">Escurecer fundo (pra texto legivel em foto clara)</label>
+        <input id="darken" type="range" min="0" max="0.7" step="0.05" value="0" />
       </div>
 
       <div class="step">
         <h3><span class="n">2</span> Texto</h3>
-        <div class="seg" id="layoutSeg">
-          <button data-l="cover" class="active" type="button">Capa</button>
-          <button data-l="content" type="button">Conteudo</button>
+        <div class="seg" id="layoutSeg" role="group" aria-label="Tipo de slide">
+          <button data-l="cover" type="button" aria-pressed="true">Capa</button>
+          <button data-l="content" type="button" aria-pressed="false">Conteudo</button>
         </div>
-        <label id="hlLabel">Manchete</label>
-        <textarea id="headline" placeholder="Floripa entrou no mapa de uma das maiores comunidades de IA do"></textarea>
-        <label>Destaque em <span class="accent-orange">laranja</span></label>
-        <input id="accent" type="text" placeholder="mundo." />
+        <label id="hlLabel" for="headline">Manchete</label>
+        <textarea id="headline" placeholder="Escreva a manchete principal aqui"></textarea>
+        <label for="accent">Destaque em <span class="accent-orange">laranja</span></label>
+        <input id="accent" type="text" placeholder="palavra ou frase em destaque" />
         <div id="coverFields">
-          <label>Subtitulo (1 linha)</label>
-          <input id="subtitle" type="text" placeholder="Comunidade global de IA, agora com capitulo na ilha" />
+          <label for="subtitle">Subtitulo (1 linha)</label>
+          <input id="subtitle" type="text" placeholder="uma linha curta de apoio" />
         </div>
         <div id="contentFields" style="display:none">
-          <label>Corpo (texto do slide)</label>
+          <label for="body">Corpo (texto do slide)</label>
           <textarea id="body" placeholder="Explique o ponto desse slide em uma ou duas frases curtas."></textarea>
         </div>
         <div class="hintline">A fonte da manchete se ajusta sozinha pra caber. Lidere com o mais ambicioso E verdadeiro.</div>
       </div>
 
-      <div class="step">
-        <h3><span class="n">3</span> Detalhes</h3>
+      <details class="step">
+        <summary><span class="n">3</span> Detalhes (conta, edicao, etiqueta) <span class="chev">abrir</span></summary>
         <div class="row">
-          <div><label>Conta (@)</label><input id="handle" type="text" value="@aicollectivefloripa" /></div>
-          <div><label>Edicao (canto)</label><input id="edition" type="text" placeholder="Junho 2026" /></div>
+          <div><label for="handle">Conta (@)</label><input id="handle" type="text" /></div>
+          <div><label for="edition">Edicao (canto)</label><input id="edition" type="text" placeholder="Junho 2026" /></div>
         </div>
-        <label>Etiqueta do topo</label>
-        <input id="kicker" type="text" value="AI Collective Florianopolis" />
+        <label for="kicker">Etiqueta do topo</label>
+        <input id="kicker" type="text" />
         <label class="check"><input id="arrow" type="checkbox" /> Mostrar seta de "arrasta" (so no post unico)</label>
-      </div>
+      </details>
 
       <div class="step">
         <h3><span class="n">4</span> Carrossel (opcional)</h3>
-        <div class="tabs" id="tabs"></div>
+        <div class="tabs" id="tabs" role="tablist" aria-label="Slides do carrossel"></div>
         <div class="hintline">Adicione slides pra fazer um carrossel. Numero de pagina e seta aparecem sozinhos.</div>
-        <button class="danger" id="removeSlide" style="display:none;">remover este slide</button>
+        <button type="button" class="danger" id="removeSlide" style="display:none;">remover este slide</button>
       </div>
 
       <div class="step">
         <h3><span class="n">5</span> Baixar</h3>
-        <button class="primary" id="download">Baixar post (PNG)</button>
-        <button class="ghost" id="downloadAll" style="display:none;">Baixar carrossel (.zip)</button>
-        <div id="status"></div>
+        <button type="button" class="primary" id="download">Baixar post (PNG)</button>
+        <button type="button" class="ghost" id="downloadAll" style="display:none;">Baixar carrossel (.zip)</button>
+        <div id="status" role="status" aria-live="polite"></div>
       </div>
     </div>
 
@@ -188,16 +210,46 @@
   <div id="measure" class="postnode cover"></div>
 
 <script>
-// ----- AIC overlay assets (mirror src/post + src/brand) -----
-const C_MARK = '<svg viewBox="0 0 150 150" width="52" height="52" fill="none"><path fill="#FF630D" d="M130.8,116.48l-23.7-21.8c-2.07-1.91-5.17-2.09-7.51-.52-15.67,10.87-38.67,9.1-53.43-2.73-16.61-13.01-20.51-35.81-9.08-53.04,7.63-11.83,27.06-21.07,43.28-20.79,9.68,0,19.78,2.6,29.19,7.52,3.41,1.87,6.51,4.27,9.47,6.73l-.5,.46-14.84,13.65-.31,.28c-6.25-3.43-14.92-7.65-24.07-7.52-4.51,0-9.02,.79-13.24,2.4-3.67,1.41-8.77,3.8-11.15,7.09-1.31,1.82-.22,3.77,2,3.76,1.62-.03,3.26-1.06,4.75-1.61,5.5-2.05,11.37-3.06,17.24-3.06,8.33-.1,14.94,2.76,20.83,7.87,2.15,1.81,5.3,1.77,7.37-.13l23.7-21.81c1.07-.98,1.09-2.66,.05-3.67-2.11-2.05-4.34-3.96-6.68-5.7-12.63-9.46-28.78-14.78-44.33-14.78-21.64-.63-46.42,13.25-54.42,31.48-12.46,26.33,2.69,54.59,28.15,65.72,7.58,3.36,18.13,5.29,27.15,4.79,8.32-.45,15.83-3.18,22.52-7.7l.33,.3,15.36,14.13,.54,.49c-28.16,21.72-69.31,18.88-94-6.79-1.24-1.26-3.01-.84-3.93,.24-.01,.01-.02,.02-.03,.03-.59,.76-.69,1.76-.22,2.68,3.55,7.52,10.59,13,17.5,17.33,11.12,6.98,24.07,10.72,37.22,10.75,19.34-.09,40.9-9.06,54.82-22.4,1.08-1.03,1-2.69-.04-3.68h0Z"/></svg>';
-const SEAL = '<svg viewBox="0 0 24 24" width="31" height="31" fill="none"><path fill="#FF630D" d="M12 1.5l2.3 1.7 2.85-.2 1 2.65 2.65 1-.2 2.85L24 12l-1.7 2.3.2 2.85-2.65 1-1 2.65-2.85-.2L12 22.5l-2.3-1.7-2.85.2-1-2.65-2.65-1 .2-2.85L0 12l1.7-2.3-.2-2.85 2.65-1 1-2.65 2.85.2L12 1.5z"/><path fill="#fff" d="M10.6 15.2l-3-3 1.4-1.4 1.6 1.6 4-4 1.4 1.4-5.4 5.4z"/></svg>';
-const CHEVRON = '<svg viewBox="0 0 24 24" width="26" height="26" fill="none"><path d="M9 5l7 7-7 7" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-const COVER_SCRIM = 'linear-gradient(180deg, rgba(12,10,9,0.55) 0%, rgba(12,10,9,0) 18%, rgba(12,10,9,0) 36%, rgba(12,10,9,0.55) 58%, rgba(12,10,9,0.9) 80%, rgba(12,10,9,0.97) 100%)';
-const CONTENT_SCRIM = 'linear-gradient(180deg, rgba(12,10,9,0.5) 0%, rgba(12,10,9,0.35) 28%, rgba(12,10,9,0.78) 66%, rgba(12,10,9,0.95) 100%)';
-const MAXH = 860;
+// ----- Brand config (single source of truth: src/brand.config.mjs, served at /brand.js) -----
+const CFG = window.BRAND_CFG || {
+  colors: { accent: "#FF630D", bg: "#0C0A09", ink: "#ffffff" },
+  sizing: { coverBase: 90, coverMin: 46, contentBase: 64, contentMin: 40, maxContentHeight: 860 },
+  scrims: { cover: [[0,0.55],[18,0],[36,0],[58,0.55],[80,0.9],[100,0.97]], content: [[0,0.5],[28,0.35],[66,0.78],[100,0.95]] },
+  logoPath: "",
+  chapter: { handle: "@aicollectivefloripa", label: "AI Collective Florianopolis" },
+  zipName: "carrossel-aicollective.zip",
+};
+
+// Apply brand tokens to CSS variables so the editor matches the render exactly.
+(function applyBrand() {
+  const r = document.documentElement.style;
+  r.setProperty("--orange", CFG.colors.accent);
+  r.setProperty("--bg", CFG.colors.bg);
+  r.setProperty("--ink", CFG.colors.ink);
+  r.setProperty("--cover-hl", CFG.sizing.coverBase + "px");
+  r.setProperty("--content-hl", CFG.sizing.contentBase + "px");
+})();
+
+function hexToRgb(hex) {
+  let h = (hex || "#000").replace("#", "");
+  if (h.length === 3) h = h.split("").map((c) => c + c).join("");
+  return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
+}
+function rgba(hex, a) { const [r, g, b] = hexToRgb(hex); return `rgba(${r}, ${g}, ${b}, ${a})`; }
+function scrimCss(stops) {
+  return "linear-gradient(180deg, " + stops.map(([p, a]) => rgba(CFG.colors.bg, a) + " " + p + "%").join(", ") + ")";
+}
+
+const ACCENT = CFG.colors.accent;
+const C_MARK = '<svg viewBox="0 0 150 150" width="52" height="52" fill="none"><path fill="' + ACCENT + '" d="' + CFG.logoPath + '"/></svg>';
+const SEAL = '<svg viewBox="0 0 24 24" width="31" height="31" fill="none"><path fill="' + ACCENT + '" d="M12 1.5l2.3 1.7 2.85-.2 1 2.65 2.65 1-.2 2.85L24 12l-1.7 2.3.2 2.85-2.65 1-1 2.65-2.85-.2L12 22.5l-2.3-1.7-2.85.2-1-2.65-2.65-1 .2-2.85L0 12l1.7-2.3-.2-2.85 2.65-1 1-2.65 2.85.2L12 1.5z"/><path fill="#fff" d="M10.6 15.2l-3-3 1.4-1.4 1.6 1.6 4-4 1.4 1.4-5.4 5.4z"/></svg>';
+const CHEVRON = '<svg viewBox="0 0 24 24" width="26" height="26" fill="none"><path d="M9 5l7 7-7 7" stroke="' + CFG.colors.ink + '" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const COVER_SCRIM = scrimCss(CFG.scrims.cover);
+const CONTENT_SCRIM = scrimCss(CFG.scrims.content);
+const MAXH = CFG.sizing.maxContentHeight;
 const esc = (s) => (s || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 
-const shared = { handle: "@aicollectivefloripa", kicker: "AI Collective Florianopolis", edition: "", arrow: false };
+const shared = { handle: CFG.chapter.handle, kicker: CFG.chapter.label, edition: "", arrow: false };
 function newSlide() { return { hero: "", layout: "cover", headline: "", accent: "", subtitle: "", body: "", focusX: 0.5, focusY: 0.5, zoom: 1, darken: 0 }; }
 let slides = [newSlide()];
 let active = 0;
@@ -215,7 +267,7 @@ function rawProps(i) {
     pageNumber: isCarousel() ? String(i + 1).padStart(2, "0") : "",
     showCarouselArrow: isCarousel() ? i < slides.length - 1 : shared.arrow,
     heroFocusX: s.focusX, heroFocusY: s.focusY, heroZoom: s.zoom, darken: s.darken,
-    headlineSize: 0,
+    headlineSize: 0, bodySize: 0,
   };
 }
 
@@ -230,8 +282,9 @@ function buildInner(p) {
   let accentEl = "";
   if (p.accent) accentEl = isContent ? ' <span class="accent-inline">' + esc(p.accent) + '</span>' : '<span class="accent-block">' + esc(p.accent) + '</span>';
   const heading = '<h2 class="hl"' + hlStyle + '><span>' + esc(p.headline) + '</span>' + accentEl + '</h2>';
+  const bodyStyle = p.bodySize > 0 ? ' style="font-size:' + p.bodySize + 'px"' : "";
   const extra = isContent
-    ? (p.body ? '<p class="body">' + esc(p.body) + '</p>' : "")
+    ? (p.body ? '<p class="body"' + bodyStyle + '>' + esc(p.body) + '</p>' : "")
     : (p.subtitle ? '<div class="sub"><span class="arrow">&#8594;</span><span class="txt">' + esc(p.subtitle) + '</span></div>' : "");
   const content = '<div class="content"><div class="chip">' + C_MARK + '<span class="handle">' + esc(p.handle) + '</span>' + SEAL + '</div>' + heading + extra + '</div>';
   const carousel = p.showCarouselArrow ? '<div class="carousel">' + CHEVRON + '</div>' : "";
@@ -239,26 +292,35 @@ function buildInner(p) {
   return hero + darken + scrim + '<div class="topbar"><span class="label">' + esc(p.kicker) + '</span><span class="label">' + esc(p.edition) + '</span></div>' + content + carousel + page;
 }
 
-// Auto-fit: shrink the heading until the content block fits the safe height.
-function measureFitSize(p) {
-  const base = p.layout === "content" ? 64 : 90;
-  const min = p.layout === "content" ? 40 : 46;
+// Auto-fit: shrink the heading (then, on content slides, the body) until the
+// bottom block fits the safe height. Returns BOTH sizes so the server render
+// matches the preview exactly (no overflow on long headlines OR long bodies).
+function measureFit(p) {
+  const isContent = p.layout === "content";
+  const hBase = isContent ? CFG.sizing.contentBase : CFG.sizing.coverBase;
+  const hMin = isContent ? CFG.sizing.contentMin : CFG.sizing.coverMin;
+  const bBase = CFG.sizing.bodyBase, bMin = CFG.sizing.bodyMin;
   measure.className = "postnode " + p.layout;
-  measure.innerHTML = buildInner({ ...p, headlineSize: 0 });
+  measure.innerHTML = buildInner({ ...p, headlineSize: 0, bodySize: 0 });
   const hl = measure.querySelector(".hl"), content = measure.querySelector(".content");
-  if (!hl || !content) return 0;
-  let size = base;
-  hl.style.fontSize = size + "px";
-  while (content.offsetHeight > MAXH && size > min) {
-    size -= 4;
-    hl.style.fontSize = size + "px";
+  if (!hl || !content) return { headlineSize: 0, bodySize: 0 };
+  let h = hBase;
+  hl.style.fontSize = h + "px";
+  while (content.offsetHeight > MAXH && h > hMin) { h -= 4; hl.style.fontSize = h + "px"; }
+  let b = bBase;
+  const body = measure.querySelector(".body");
+  if (isContent && body) {
+    while (content.offsetHeight > MAXH && b > bMin) { b -= 3; body.style.fontSize = b + "px"; }
   }
-  return size === base ? 0 : size;
+  // Send BOTH sizes explicitly (so preview == download, no "0 means auto" ambiguity).
+  return { headlineSize: h, bodySize: isContent ? b : 0 };
 }
 
 function propsFor(i) {
   const p = rawProps(i);
-  p.headlineSize = p.heroImage ? measureFitSize(p) : measureFitSize(p);
+  const f = measureFit(p);
+  p.headlineSize = f.headlineSize;
+  p.bodySize = f.bodySize;
   return p;
 }
 
@@ -281,27 +343,35 @@ function renderTabs() {
   const tabs = $("tabs"); tabs.innerHTML = "";
   slides.forEach((s, i) => {
     const b = document.createElement("button");
-    b.className = "tab" + (i === active ? " active" : "");
+    b.className = "tab";
+    b.setAttribute("role", "tab");
+    b.setAttribute("aria-selected", i === active ? "true" : "false");
     b.innerHTML = "Slide " + (i + 1) + ' <small>' + (s.layout === "content" ? "cont." : "capa") + '</small>';
     b.onclick = () => { active = i; syncInputs(); renderPreview(); renderTabs(); updateButtons(); };
     tabs.appendChild(b);
   });
   const add = document.createElement("button");
-  add.className = "tab add"; add.textContent = "+ slide";
+  add.className = "tab add"; add.type = "button"; add.textContent = "+ slide";
+  add.setAttribute("aria-label", "Adicionar slide");
   add.onclick = () => { slides.push(newSlide()); active = slides.length - 1; syncInputs(); renderPreview(); renderTabs(); updateButtons(); };
   tabs.appendChild(add);
   $("removeSlide").style.display = slides.length > 1 ? "inline-block" : "none";
 }
 
 function updateButtons() {
-  $("download").disabled = !slides[active].hero;
-  $("download").textContent = isCarousel() ? "Baixar este slide (PNG)" : "Baixar post (PNG)";
+  const s = slides[active];
+  const hasHero = !!s.hero;
+  const hasText = !!s.headline.trim();
+  const btn = $("download");
+  btn.disabled = !hasHero || !hasText;
+  btn.title = !hasHero ? "Adicione uma imagem de fundo primeiro" : (!hasText ? "Escreva a manchete primeiro" : "");
+  btn.textContent = isCarousel() ? "Baixar este slide (PNG)" : "Baixar post (PNG)";
   $("downloadAll").style.display = isCarousel() ? "block" : "none";
 }
 
 function applyLayoutUI() {
   const s = slides[active];
-  document.querySelectorAll("#layoutSeg button").forEach((b) => b.classList.toggle("active", b.dataset.l === s.layout));
+  document.querySelectorAll("#layoutSeg button").forEach((b) => b.setAttribute("aria-pressed", b.dataset.l === s.layout ? "true" : "false"));
   $("coverFields").style.display = s.layout === "content" ? "none" : "block";
   $("contentFields").style.display = s.layout === "content" ? "block" : "none";
   $("hlLabel").textContent = s.layout === "content" ? "Titulo do slide" : "Manchete";
@@ -314,6 +384,7 @@ function syncInputs() {
   $("handle").value = shared.handle; $("edition").value = shared.edition;
   $("kicker").value = shared.kicker; $("arrow").checked = shared.arrow;
   $("zoom").value = s.zoom; $("darken").value = s.darken;
+  $("posx").value = Math.round(s.focusX * 100); $("posy").value = Math.round(s.focusY * 100);
   applyLayoutUI(); paintDrop();
 }
 
@@ -324,13 +395,15 @@ function paintDrop() {
 }
 
 const on = (id, ev, fn) => $(id).addEventListener(ev, fn);
-["headline","accent","subtitle","body"].forEach((k) => on(k, "input", (e) => { slides[active][k] = e.target.value; renderPreview(); }));
+["headline","accent","subtitle","body"].forEach((k) => on(k, "input", (e) => { slides[active][k] = e.target.value; renderPreview(); updateButtons(); }));
 ["handle","kicker","edition"].forEach((k) => on(k, "input", (e) => { shared[k] = e.target.value; renderPreview(); }));
 on("arrow", "change", (e) => { shared.arrow = e.target.checked; renderPreview(); });
 on("zoom", "input", (e) => { slides[active].zoom = Number(e.target.value); renderPreview(); });
 on("darken", "input", (e) => { slides[active].darken = Number(e.target.value); renderPreview(); });
+on("posx", "input", (e) => { slides[active].focusX = Number(e.target.value) / 100; renderPreview(); });
+on("posy", "input", (e) => { slides[active].focusY = Number(e.target.value) / 100; renderPreview(); });
 document.querySelectorAll("#layoutSeg button").forEach((b) => b.addEventListener("click", () => {
-  slides[active].layout = b.dataset.l; applyLayoutUI(); renderPreview(); renderTabs();
+  slides[active].layout = b.dataset.l; applyLayoutUI(); renderPreview(); renderTabs(); updateButtons();
 }));
 on("removeSlide", "click", () => {
   if (slides.length <= 1) return;
@@ -341,12 +414,13 @@ on("removeSlide", "click", () => {
 // File drop / pick.
 const drop = $("drop"), fileInput = $("file");
 function loadFile(file) {
-  if (!file || !file.type.startsWith("image/")) return;
+  if (!file || !file.type.startsWith("image/")) { setStatus("Esse arquivo nao e uma imagem.", "err"); return; }
   const r = new FileReader();
   r.onload = () => { const s = slides[active]; s.hero = r.result; s.focusX = 0.5; s.focusY = 0.5; s.zoom = 1; paintDrop(); syncInputs(); renderPreview(); updateButtons(); };
   r.readAsDataURL(file);
 }
 drop.addEventListener("click", () => fileInput.click());
+drop.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); fileInput.click(); } });
 fileInput.addEventListener("change", (e) => loadFile(e.target.files[0]));
 ["dragover","dragenter"].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add("over"); }));
 ["dragleave","drop"].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.remove("over"); }));
@@ -370,6 +444,7 @@ function attachHeroDrag() {
     s.focusY = Math.min(1, Math.max(0, dragging.fy - (e.clientY - dragging.y) / dragging.h));
     const img = post.querySelector(".hero");
     if (img) { const pos = (s.focusX*100) + "% " + (s.focusY*100) + "%"; img.style.objectPosition = pos; img.style.transformOrigin = pos; }
+    $("posx").value = Math.round(s.focusX * 100); $("posy").value = Math.round(s.focusY * 100);
   });
   const end = () => { dragging = null; };
   hero.addEventListener("pointerup", end);
@@ -391,7 +466,9 @@ function downloadBlob(blob, name) {
 }
 
 on("download", "click", async () => {
-  if (!slides[active].hero) return;
+  const s = slides[active];
+  if (!s.hero) { setStatus("Adicione uma imagem de fundo primeiro.", "err"); return; }
+  if (!s.headline.trim()) { setStatus("Escreva a manchete primeiro.", "err"); return; }
   $("download").disabled = true; setStatus("Renderizando na qualidade final...", "");
   try {
     const bytes = await renderBytes(active);
@@ -399,11 +476,14 @@ on("download", "click", async () => {
     downloadBlob(new Blob([bytes], { type: "image/png" }), name);
     setStatus("Pronto. Baixado: " + name, "ok");
   } catch (e) { setStatus(e.message, "err"); }
-  $("download").disabled = false;
+  updateButtons();
 });
 
 on("downloadAll", "click", async () => {
-  for (let i = 0; i < slides.length; i++) if (!slides[i].hero) { setStatus("O slide " + (i + 1) + " esta sem imagem.", "err"); return; }
+  for (let i = 0; i < slides.length; i++) {
+    if (!slides[i].hero) { setStatus("O slide " + (i + 1) + " esta sem imagem.", "err"); return; }
+    if (!slides[i].headline.trim()) { setStatus("O slide " + (i + 1) + " esta sem manchete.", "err"); return; }
+  }
   $("downloadAll").disabled = true;
   try {
     const files = [];
@@ -412,7 +492,7 @@ on("downloadAll", "click", async () => {
       files.push({ name: "post-" + String(i + 1).padStart(2, "0") + ".png", data: await renderBytes(i) });
     }
     setStatus("Empacotando o .zip...", "");
-    downloadBlob(makeZip(files), "carrossel-aicollective.zip");
+    downloadBlob(makeZip(files), CFG.zipName);
     setStatus("Carrossel pronto. " + slides.length + " slides no .zip.", "ok");
   } catch (e) { setStatus(e.message, "err"); }
   $("downloadAll").disabled = false;

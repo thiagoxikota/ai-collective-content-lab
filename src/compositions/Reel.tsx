@@ -1,12 +1,14 @@
 import React from "react";
-import { AbsoluteFill, Sequence, staticFile, useVideoConfig } from "remotion";
+import { AbsoluteFill, OffthreadVideo, Sequence, staticFile, useVideoConfig } from "remotion";
 import { VideoProps } from "../schema";
+import { BRAND } from "../brand";
 import {
   BrandTag,
   CaptionBar,
   FadeWrapper,
   KenBurnsImage,
   TitleCard,
+  isVideo,
 } from "../components";
 
 // Reel: a vertical-first montage. Each image gets a slow Ken Burns zoom,
@@ -26,11 +28,21 @@ export const Reel: React.FC<VideoProps> = ({
   const imgs = images.length > 0 ? images : ["samples/floripa-sunset.png"];
 
   return (
-    <AbsoluteFill style={{ backgroundColor: "#000000" }}>
+    <AbsoluteFill style={{ backgroundColor: BRAND.colors.bg }}>
       {imgs.map((img, i) => (
         <Sequence key={img + i} from={i * per} durationInFrames={per + fade}>
           <FadeWrapper index={i} count={imgs.length} per={per} fade={fade}>
-            <KenBurnsImage src={staticFile(img)} durationInFrames={per + fade} />
+            {isVideo(img) ? (
+              <AbsoluteFill style={{ backgroundColor: BRAND.colors.bg }}>
+                <OffthreadVideo
+                  src={staticFile(img)}
+                  muted
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+              </AbsoluteFill>
+            ) : (
+              <KenBurnsImage src={staticFile(img)} durationInFrames={per + fade} />
+            )}
             <CaptionBar
               text={captions[i] ?? ""}
               accent={accentColor}

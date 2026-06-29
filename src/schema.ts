@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { BRAND, CHAPTER } from "./brand.config.mjs";
 
 // Fixed frame rate for every composition in this lab.
 export const FPS = 30;
@@ -44,8 +45,11 @@ export const postSchema = z.object({
   heroFocusY: z.number(),
   heroZoom: z.number(),
   darken: z.number(),
-  // Headline size in px. 0 means "use the layout default" (auto-fit lives in the UI).
+  // Headline size in px. 0 means "auto-fit" (the render core measures and shrinks
+  // to fit; the editor may also pass a measured size so preview matches download).
   headlineSize: z.number(),
+  // Body size in px for content slides. 0 means "auto-fit". Default for cover.
+  bodySize: z.number().default(0),
 });
 
 export type PostProps = z.infer<typeof postSchema>;
@@ -58,8 +62,8 @@ export const defaultPostProps: PostProps = {
   accent: "mundo.",
   subtitle: "Comunidade global de IA, agora com capítulo na ilha",
   body: "",
-  handle: "@aicollectivefloripa",
-  kicker: "AI Collective Florianópolis",
+  handle: CHAPTER.handle,
+  kicker: CHAPTER.label,
   edition: "",
   accentColor: "",
   pageNumber: "",
@@ -69,6 +73,7 @@ export const defaultPostProps: PostProps = {
   heroZoom: 1,
   darken: 0,
   headlineSize: 0,
+  bodySize: 0,
 };
 
 // The three shapes a reel or slideshow can take.
@@ -106,11 +111,11 @@ export const defaultVideoProps: VideoProps = {
     "samples/floripa-night.png",
   ],
   captions: ["Floripa entrou no mapa", "Comunidade de IA", "AI Collective"],
-  title: "AI Collective Floripa",
-  brand: "AI Collective Florianópolis",
+  title: CHAPTER.label,
+  brand: CHAPTER.label,
   orientation: "vertical",
   secondsPerImage: 3,
-  accentColor: "#FF630D",
+  accentColor: BRAND.colors.accent,
 };
 
 // Total length: each image gets `secondsPerImage`, plus a half-second tail

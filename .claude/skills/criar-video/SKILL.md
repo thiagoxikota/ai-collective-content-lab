@@ -30,8 +30,12 @@ node scripts/render-video.mjs --comp Reel --orientation vertical --seconds 3 \
 ```
 Sem `--images`, ele usa todas as imagens de `assets/generated/` (ou as amostras).
 Para escolher imagens: `--images "generated/img-a.png,generated/img-b.png"`.
+Da pra misturar clips de IA (mp4) com fotos: `--images "generated/clip-x.mp4,samples/floripa-night.png"`.
 Orientacao: `--orientation vertical | horizontal | square`.
 Composicao: `--comp Reel | Slideshow`.
+`--brand "Seu Chapter"` troca a etiqueta de marca no canto (padrao = o chapter do `brand.config.mjs`).
+`--accent "#FF630D"` troca a cor de destaque (padrao = laranja da marca).
+`--seconds 3` segundos por imagem (1 a 15; valores fora disso sao ajustados).
 
 ## Exemplo real
 Pessoa: "monta um reel vertical com as imagens que a gente gerou, legenda 'Floripa no mapa'"

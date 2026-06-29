@@ -92,23 +92,41 @@ npm run studio                 # preview ao vivo (composicoes Post, Reel, Slides
 
 ## Identidade visual do The AI Collective
 
-Tudo aqui vem da marca real (aicollective.com), verificado em 2026-06-28.
+Tudo isto vive num unico arquivo, **`src/brand.config.mjs`** (a fonte de verdade
+que o render, o editor e a CLI leem). Os valores vem da marca real
+(aicollective.com), verificado em 2026-06-28.
 
-| Item | Valor |
+| Item | Valor (no `brand.config.mjs`) |
 | --- | --- |
 | Laranja da marca (acento) | `#FF630D` (no site, o token CSS e o quase igual `#f97316`) |
 | Fundo escuro / scrim | `#0C0A09` (stone-950) |
-| Fundo claro | `#F5F5F4` (stone-100) |
-| Tinta (texto) | `#FFFFFF` na foto, `#292524` no claro |
+| Tinta (texto na foto) | `#FFFFFF` |
 | Secundario | `#78726D` (stone-500) |
 | Manchete (serifa) | Georgia Pro (proprietaria) -> usamos a gratis **Source Serif 4** |
 | Texto (sans) | **Open Sans** (a fonte real da marca, gratis) |
 | Marca | o "C" circlemark (recriado do SVG oficial), laranja |
 | Tagline | "The Human Side of AI." |
 
-Fontes: og:image, CSS e favicon de aicollective.com, mais a voz/numeros do
+Posts e videos usam a MESMA marca (mesmas cores, mesmas fontes). Fontes da
+pesquisa: og:image, CSS e favicon de aicollective.com, mais a voz/numeros do
 `social-strategy.md` do chapter. O kit oficial (vetores do logo, variantes) fica
 em https://www.aicollective.com/press. Para producao seria, peca os vetores pra HQ.
+
+## Como trocar de marca (white-label / rebrand)
+
+O motor e neutro. A marca do AI Collective e so o exemplo padrao. Para usar a sua:
+
+**1.** Edite **`src/brand.config.mjs`** (um arquivo). La ficam, num lugar so:
+   - `BRAND.colors` (o laranja de acento, o fundo escuro, etc.)
+   - `BRAND.fonts` (nomes das fontes)
+   - `BRAND.logoPath` (o caminho do SVG do seu logo)
+   - `CHAPTER.handle` e `CHAPTER.label` (o @ e a etiqueta do topo / marca do video)
+
+**2.** Se trocar a FONTE, troque tambem os dois nomes em:
+   - `ui/index.html` (a tag `<link>` do Google Fonts, no topo)
+   - `src/brand.tsx` (os dois `loadFont` do `@remotion/google-fonts`)
+
+So isso. Posts, carrossel, reels e o editor passam a sair com a sua marca.
 
 **Regra de copy (do chapter):** lidere com a coisa mais ambiciosa E verdadeira,
 nunca a burocratica. Numero: piso publicado (70k+), nunca o teto. Passe toda
@@ -159,9 +177,11 @@ node scripts/render-video.mjs --concurrency 2
 ```
 
 **Quero ajustar o texto antes de salvar**
+Use o editor visual, que mostra a previa ao vivo enquanto voce digita:
 ```bash
-npm run studio
+npm run ui
 ```
+(`npm run studio` abre o Remotion Studio, a versao avancada com painel de props.)
 
 ---
 
@@ -175,8 +195,12 @@ Built for AI Collective chapters (started with Florianopolis).
 for generating hero images or AI clips.
 
 1. `./scripts/setup.sh`
-2. Open the folder in Claude Code and say: `cria um post sobre o evento` (or in English, `make a post about our first meetup`)
-3. Optional, for AI image generation: paste a fal.ai key into `.env`
+2. **Easiest, no code:** run `npm run ui`, drop a photo, type the headline, download the PNG (or the whole carousel as a `.zip`).
+3. Or, in Claude Code, say: `cria um post sobre o evento` (or in English, `make a post about our first meetup`)
+4. Optional, for AI image generation: paste a fal.ai key into `.env`
+
+**Rebrand (white-label):** edit one file, `src/brand.config.mjs` (colors, fonts,
+logo path, handle/label). See "Como trocar de marca" above.
 
 **Skills:** `criar-post` (photo + AIC overlay to PNG), `gerar-imagem` (text to
 image), `prompt-de-imagem` (prompt help), `criar-video` (images to MP4 reel),

@@ -2,6 +2,7 @@ import React from "react";
 import {
   AbsoluteFill,
   Img,
+  OffthreadVideo,
   Sequence,
   interpolate,
   staticFile,
@@ -9,7 +10,8 @@ import {
   useVideoConfig,
 } from "remotion";
 import { VideoProps } from "../schema";
-import { BrandTag, SANS } from "../components";
+import { BRAND } from "../brand";
+import { BrandTag, SANS, isVideo } from "../components";
 
 // One slide: image fitted (letterboxed) on a dark card, a centered caption,
 // and a quick fade in / out. Calmer and more "deck-like" than the Reel.
@@ -32,21 +34,34 @@ const Slide: React.FC<{
     <AbsoluteFill
       style={{
         opacity,
-        backgroundColor: "#0d1020",
+        backgroundColor: BRAND.colors.bg,
         justifyContent: "center",
         alignItems: "center",
         padding: "6%",
       }}
     >
-      <Img
-        src={src}
-        style={{
-          maxWidth: "100%",
-          maxHeight: caption ? "78%" : "100%",
-          objectFit: "contain",
-          borderRadius: 18,
-        }}
-      />
+      {isVideo(src) ? (
+        <OffthreadVideo
+          src={src}
+          muted
+          style={{
+            maxWidth: "100%",
+            maxHeight: caption ? "78%" : "100%",
+            objectFit: "contain",
+            borderRadius: 18,
+          }}
+        />
+      ) : (
+        <Img
+          src={src}
+          style={{
+            maxWidth: "100%",
+            maxHeight: caption ? "78%" : "100%",
+            objectFit: "contain",
+            borderRadius: 18,
+          }}
+        />
+      )}
       {caption ? (
         <p
           style={{
@@ -110,7 +125,7 @@ export const Slideshow: React.FC<VideoProps> = ({
   const imgs = images.length > 0 ? images : ["samples/floripa-sunset.png"];
 
   return (
-    <AbsoluteFill style={{ backgroundColor: "#0d1020" }}>
+    <AbsoluteFill style={{ backgroundColor: BRAND.colors.bg }}>
       {imgs.map((img, i) => (
         <Sequence key={img + i} from={i * per} durationInFrames={per}>
           <Slide

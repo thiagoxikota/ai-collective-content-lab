@@ -29,6 +29,18 @@ export function loadEnv() {
   }
 }
 
+// Turn any uncaught error / rejection into ONE friendly line + exit 1, instead
+// of a developer stack trace. Call once at the top of a CLI entrypoint. The
+// no-key path (requireKey) still prints its own richer message before this.
+export function installErrorHandler() {
+  const fail = (err) => {
+    console.error("\n  " + String((err && err.message) || err) + "\n");
+    process.exit(1);
+  };
+  process.on("unhandledRejection", fail);
+  process.on("uncaughtException", fail);
+}
+
 // Read a required env var or fail with a friendly, actionable message.
 export function requireKey(name) {
   loadEnv();

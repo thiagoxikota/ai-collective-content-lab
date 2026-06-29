@@ -67,5 +67,5 @@ Saida: `out/post-...png`, 1080x1350, identidade do AI Collective (serifa branca 
 
 ## Observacoes
 - Formato: 1080x1350 (feed retrato 4:5). Para story/reel use a skill `criar-video`.
-- A fonte da manchete se ajusta sozinha pra caber (auto-fit no editor).
+- A fonte da manchete (e o corpo do slide de conteudo) se ajusta sozinha pra caber em QUALQUER caminho (CLI e editor): manchete longa nunca estoura pra fora da arte.
 - Preview ao vivo pra ajustar texto: `npm run ui` (editor) ou `npm run studio` (Remotion).

@@ -26,8 +26,8 @@ Monte o prompt juntando, nesta ordem:
 6. Qualidade. "alta qualidade, nitido, detalhado".
 
 ## Formato (aspect ratio)
-- Reel / story: vertical (`--aspect vertical`)
-- Post / banner / slide: horizontal (`--aspect horizontal`)
+- Post do feed (skill `criar-post`) e reel / story: vertical (`--aspect vertical`). O post sai 1080x1350 (retrato 4:5), entao a foto de fundo deve ser vertical, nunca deitada.
+- Banner / capa horizontal / slide deitado: horizontal (`--aspect horizontal`)
 - Logo / icone / avatar: square (`--aspect square`)
 
 ## Passo a passo

@@ -10,9 +10,10 @@
 //   node scripts/generate-clip.mjs "anima essa foto" --image assets/generated/image-xxx.png
 //   node scripts/generate-clip.mjs "drone sobre a ilha" --duration 5
 import { parseArgs } from "node:util";
-import { loadEnv } from "./lib/env.mjs";
+import { loadEnv, installErrorHandler } from "./lib/env.mjs";
 import { getProvider } from "./lib/providers/index.mjs";
 
+installErrorHandler();
 loadEnv();
 
 const { values, positionals } = parseArgs({

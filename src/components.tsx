@@ -6,10 +6,14 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
+import { BRAND } from "./brand";
 
-// One clean, system font stack. No external font download needed.
-export const SANS =
-  '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
+// Is this asset a video clip (e.g. one made by the gerar-clip-ia skill)?
+export const isVideo = (src: string): boolean => /\.(mp4|mov|webm|m4v)$/i.test(src);
+
+// The brand body font (Open Sans), loaded by src/brand.tsx. Video and posts
+// now share ONE typography source, so rebranding the font cascades to both.
+export const SANS = BRAND.body.fontFamily;
 
 // A full-bleed image with a slow Ken Burns zoom (scale + drift over time).
 export const KenBurnsImage: React.FC<{
@@ -191,12 +195,12 @@ export const TitleCard: React.FC<{ title: string; accent: string }> = ({
       >
         <p
           style={{
-            color: "#ffffff",
+            color: BRAND.colors.ink,
             fontSize,
-            fontWeight: 900,
+            fontWeight: 800,
             lineHeight: 1.05,
             margin: 0,
-            fontFamily: SANS,
+            fontFamily: BRAND.display.fontFamily,
             textShadow: "0 4px 24px rgba(0,0,0,0.8)",
           }}
         >

@@ -13,12 +13,15 @@ import path from "node:path";
 import { parseArgs } from "node:util";
 import { bundle } from "@remotion/bundler";
 import { ensureBrowser, renderMedia, selectComposition } from "@remotion/renderer";
-import { loadEnv, repoRoot } from "./lib/env.mjs";
+import { loadEnv, installErrorHandler, repoRoot } from "./lib/env.mjs";
 import { assetRelative } from "./lib/util.mjs";
+import { BRAND, CHAPTER } from "../src/brand.config.mjs";
 
+installErrorHandler();
 loadEnv();
 
-const IMAGE_EXT = /\.(png|jpe?g|webp)$/i;
+// Images AND video clips (e.g. from the gerar-clip-ia skill) are valid inputs.
+const MEDIA_EXT = /\.(png|jpe?g|webp|mp4|mov|webm|m4v)$/i;
 const assetsDir = path.join(repoRoot, "assets");
 
 const { values } = parseArgs({
@@ -54,12 +57,12 @@ function toAssetRelative(token) {
 function defaultImages() {
   const gen = path.join(assetsDir, "generated");
   const fromGen = fs.existsSync(gen)
-    ? fs.readdirSync(gen).filter((f) => IMAGE_EXT.test(f)).sort().map((f) => `generated/${f}`)
+    ? fs.readdirSync(gen).filter((f) => MEDIA_EXT.test(f)).sort().map((f) => `generated/${f}`)
     : [];
   if (fromGen.length > 0) return fromGen;
   const samples = path.join(assetsDir, "samples");
   return fs.existsSync(samples)
-    ? fs.readdirSync(samples).filter((f) => IMAGE_EXT.test(f)).sort().map((f) => `samples/${f}`)
+    ? fs.readdirSync(samples).filter((f) => MEDIA_EXT.test(f)).sort().map((f) => `samples/${f}`)
     : [];
 }
 
@@ -75,14 +78,26 @@ if (images.length === 0) {
 
 const captions = values.captions ? values.captions.split("|").map((c) => c.trim()) : [];
 
+// Clamp seconds-per-image to a sane 1..15 (a typo like --seconds 99999 would
+// otherwise queue an hours-long render; NaN would crash the duration math).
+let secondsPerImage = Number(values.seconds);
+if (!Number.isFinite(secondsPerImage)) secondsPerImage = 3;
+if (secondsPerImage < 1 || secondsPerImage > 15) {
+  console.log(`  aviso: --seconds ${values.seconds} fora de 1..15, ajustando para o limite.`);
+  secondsPerImage = Math.min(15, Math.max(1, secondsPerImage));
+}
+
+const ORIENTATIONS = ["vertical", "horizontal", "square"];
+const orientation = ORIENTATIONS.includes(values.orientation) ? values.orientation : "vertical";
+
 const inputProps = {
   images,
   captions,
   title: values.title ?? "",
-  brand: values.brand ?? "AI Collective Florianopolis",
-  orientation: values.orientation || "vertical",
-  secondsPerImage: values.seconds ? Number(values.seconds) : 3,
-  accentColor: values.accent || "#FF630D",
+  brand: values.brand ?? CHAPTER.label,
+  orientation,
+  secondsPerImage,
+  accentColor: values.accent || BRAND.colors.accent,
 };
 
 const outDir = path.join(repoRoot, "out");

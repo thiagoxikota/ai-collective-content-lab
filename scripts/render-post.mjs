@@ -13,10 +13,12 @@
 import fs from "node:fs";
 import path from "node:path";
 import { parseArgs } from "node:util";
-import { loadEnv, repoRoot } from "./lib/env.mjs";
+import { loadEnv, installErrorHandler, repoRoot } from "./lib/env.mjs";
 import { renderPostStill } from "./lib/render.mjs";
 import { assetRelative, downloadTo, outputPath } from "./lib/util.mjs";
+import { CHAPTER } from "../src/brand.config.mjs";
 
+installErrorHandler();
 loadEnv();
 
 const assetsDir = path.join(repoRoot, "assets");
@@ -74,11 +76,13 @@ const inputProps = {
   heroImage,
   layout: values.content ? "content" : "cover",
   headline: values.headline ?? "O algoritmo mudou.",
-  accent: values.accent ?? "A comunidade não.",
+  // Layout-aware: the cover gets a default accent tail, content slides do NOT
+  // (a leftover accent would render as a stray orange tail after the heading).
+  accent: values.accent ?? (values.content ? "" : "A comunidade não."),
   subtitle: values.subtitle ?? "Por que estar na sala importa mais que ter seguidores",
   body: values.body ?? "",
-  handle: values.handle ?? "@aicollectivefloripa",
-  kicker: values.kicker ?? "AI Collective Florianópolis",
+  handle: values.handle ?? CHAPTER.handle,
+  kicker: values.kicker ?? CHAPTER.label,
   edition: values.edition ?? "",
   accentColor: values.color ?? "",
   pageNumber: values.page ?? "",
@@ -87,7 +91,8 @@ const inputProps = {
   heroFocusY: num(values.focusy, 0.5),
   heroZoom: num(values.zoom, 1),
   darken: num(values.darken, 0),
-  headlineSize: 0,
+  headlineSize: 0, // 0 = the render core auto-fits (measures + shrinks to fit)
+  bodySize: 0,
 };
 
 const outDir = path.join(repoRoot, "out");
