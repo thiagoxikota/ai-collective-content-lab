@@ -78,17 +78,19 @@ const AccountChip: React.FC<{ handle: string }> = ({ handle }) => (
 );
 
 // Headline: white block, then the accent tail on its own line(s).
-const Headline: React.FC<{ headline: string; accent: string; accentColor: string }> = ({
+// `size` is the px font-size (the UI auto-fits it; 0 falls back to the default).
+const Headline: React.FC<{ headline: string; accent: string; accentColor: string; size: number }> = ({
   headline,
   accent,
   accentColor,
+  size,
 }) => (
   <h1
     style={{
       margin: 0,
       fontFamily: BRAND.display.fontFamily,
       fontWeight: 800,
-      fontSize: 90,
+      fontSize: size > 0 ? size : 90,
       lineHeight: 1.0,
       letterSpacing: -1,
       color: BRAND.colors.ink,
@@ -100,6 +102,50 @@ const Headline: React.FC<{ headline: string; accent: string; accentColor: string
       <span style={{ display: "block", color: accentColor }}> {accent}</span>
     ) : null}
   </h1>
+);
+
+// Content slide: a medium heading + a body paragraph. Calmer than the cover,
+// for the middle slides of a carousel (the "what / when / how" pages).
+const ContentBlock: React.FC<{
+  heading: string;
+  accent: string;
+  body: string;
+  accentColor: string;
+  size: number;
+}> = ({ heading, accent, body, accentColor, size }) => (
+  <div>
+    <h2
+      style={{
+        margin: 0,
+        fontFamily: BRAND.display.fontFamily,
+        fontWeight: 800,
+        fontSize: size > 0 ? size : 64,
+        lineHeight: 1.05,
+        letterSpacing: -0.5,
+        color: BRAND.colors.ink,
+        textShadow: "0 3px 22px rgba(0,0,0,0.6)",
+      }}
+    >
+      <span>{heading}</span>
+      {accent ? <span style={{ color: accentColor }}> {accent}</span> : null}
+    </h2>
+    {body ? (
+      <p
+        style={{
+          margin: "28px 0 0",
+          fontFamily: BRAND.body.fontFamily,
+          fontSize: 37,
+          fontWeight: 500,
+          lineHeight: 1.4,
+          color: BRAND.colors.ink,
+          maxWidth: "94%",
+          textShadow: "0 1px 10px rgba(0,0,0,0.55)",
+        }}
+      >
+        {body}
+      </p>
+    ) : null}
+  </div>
 );
 
 // Dek: accent arrow + a short supporting line, in tracked caps.
@@ -176,28 +222,45 @@ const PageNumber: React.FC<{ n: string }> = ({ n }) => (
 export const PostOverlay: React.FC<PostProps> = (props) => {
   const accentColor = props.accentColor || BRAND.colors.accent;
   const bg = BRAND.colors.bg;
+  const isContent = props.layout === "content";
+  // Content slides are text-heavy, so they get a heavier, more even scrim.
+  const scrim = isContent
+    ? `linear-gradient(180deg, ${withAlpha(bg, 0.5)} 0%, ${withAlpha(bg, 0.35)} 28%, ${withAlpha(
+        bg,
+        0.78
+      )} 66%, ${withAlpha(bg, 0.95)} 100%)`
+    : `linear-gradient(180deg, ${withAlpha(bg, 0.55)} 0%, ${withAlpha(bg, 0)} 18%, ${withAlpha(
+        bg,
+        0
+      )} 36%, ${withAlpha(bg, 0.55)} 58%, ${withAlpha(bg, 0.9)} 80%, ${withAlpha(bg, 0.97)} 100%)`;
   return (
     <AbsoluteFill>
-      {/* Brand-tinted scrims: darken top (for the label bar) and bottom (for text). */}
-      <AbsoluteFill
-        style={{
-          background: `linear-gradient(180deg, ${withAlpha(bg, 0.55)} 0%, ${withAlpha(
-            bg,
-            0
-          )} 18%, ${withAlpha(bg, 0)} 36%, ${withAlpha(bg, 0.55)} 58%, ${withAlpha(
-            bg,
-            0.9
-          )} 80%, ${withAlpha(bg, 0.97)} 100%)`,
-        }}
-      />
+      <AbsoluteFill style={{ background: scrim }} />
 
       <TopBar kicker={props.kicker} edition={props.edition} />
 
       {/* Bottom-anchored content block. */}
       <AbsoluteFill style={{ justifyContent: "flex-end", padding: PAD, gap: 28 }}>
         <AccountChip handle={props.handle} />
-        <Headline headline={props.headline} accent={props.accent} accentColor={accentColor} />
-        <Subtitle text={props.subtitle} accentColor={accentColor} />
+        {isContent ? (
+          <ContentBlock
+            heading={props.headline}
+            accent={props.accent}
+            body={props.body}
+            accentColor={accentColor}
+            size={props.headlineSize}
+          />
+        ) : (
+          <>
+            <Headline
+              headline={props.headline}
+              accent={props.accent}
+              accentColor={accentColor}
+              size={props.headlineSize}
+            />
+            <Subtitle text={props.subtitle} accentColor={accentColor} />
+          </>
+        )}
       </AbsoluteFill>
 
       {props.showCarouselArrow ? <CarouselArrow /> : null}

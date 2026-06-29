@@ -6,7 +6,7 @@
 <title>Editor de posts . The AI Collective</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@600;700;800&family=Source+Serif+4:wght@800&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@500;600;700;800&family=Source+Serif+4:wght@800&display=swap" rel="stylesheet" />
 <style>
   :root {
     --orange: #FF630D;
@@ -20,143 +20,90 @@
     --serif: "Source Serif 4", Georgia, serif;
   }
   * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    background: #100e0d;
-    color: var(--ink);
-    font-family: var(--sans);
-    font-size: 16px;
-    line-height: 1.4;
-  }
-  header {
-    padding: 22px 28px;
-    border-bottom: 1px solid var(--line);
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  }
+  body { margin: 0; background: #100e0d; color: var(--ink); font-family: var(--sans); font-size: 16px; line-height: 1.4; }
+  header { padding: 22px 28px; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 14px; }
   header .dot { width: 14px; height: 14px; border-radius: 50%; background: var(--orange); }
-  header h1 { font-size: 19px; font-weight: 800; margin: 0; letter-spacing: 0.2px; }
+  header h1 { font-size: 19px; font-weight: 800; margin: 0; }
   header span { color: var(--muted); font-size: 14px; }
 
-  .wrap {
-    display: grid;
-    grid-template-columns: 1fr minmax(360px, 480px);
-    gap: 0;
-    align-items: start;
-  }
-  @media (max-width: 820px) { .wrap { grid-template-columns: 1fr; } }
+  .wrap { display: grid; grid-template-columns: 1fr minmax(380px, 520px); gap: 0; align-items: start; }
+  @media (max-width: 860px) { .wrap { grid-template-columns: 1fr; } }
 
-  /* Preview column */
   .preview {
-    order: 2;
-    position: sticky;
-    top: 0;
-    padding: 28px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-    background:
-      repeating-conic-gradient(#1a1714 0% 25%, #151210 0% 50%) 50% / 36px 36px;
-    min-height: calc(100vh - 64px);
-    border-left: 1px solid var(--line);
+    order: 2; position: sticky; top: 0; padding: 28px; display: flex; flex-direction: column;
+    align-items: center; gap: 14px; min-height: calc(100vh - 64px); border-left: 1px solid var(--line);
+    background: repeating-conic-gradient(#1a1714 0% 25%, #151210 0% 50%) 50% / 36px 36px;
   }
-  @media (max-width: 820px) { .preview { position: static; min-height: 0; border-left: none; border-bottom: 1px solid var(--line); order: -1; } }
+  @media (max-width: 860px) { .preview { position: static; min-height: 0; border-left: none; border-bottom: 1px solid var(--line); order: -1; } }
   .stage { position: relative; overflow: hidden; border-radius: 8px; box-shadow: 0 18px 50px rgba(0,0,0,0.5); }
-  .preview .hint { color: var(--muted); font-size: 13px; }
+  .preview .hint { color: var(--muted); font-size: 13px; text-align: center; }
 
-  /* The post node, always 1080x1350, scaled down by JS. */
-  #post {
-    position: absolute; top: 0; left: 0;
-    width: 1080px; height: 1350px;
-    transform-origin: top left;
-    background: var(--bg);
-    overflow: hidden;
-  }
-  #post .hero { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-  #post .placeholder {
-    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-    color: #6b6560; font-family: var(--sans); font-size: 44px; text-align: center; padding: 0 80px;
-  }
-  #post .scrim { position: absolute; inset: 0; }
-  #post .topbar {
-    position: absolute; top: 0; left: 0; right: 0; padding: 48px 60px;
-    display: flex; justify-content: space-between; align-items: center;
-  }
-  #post .label {
-    color: var(--ink); font-family: var(--sans); font-size: 22px; font-weight: 700;
-    letter-spacing: 1.6px; text-transform: uppercase; text-shadow: 0 1px 8px rgba(0,0,0,0.5);
-  }
-  #post .content { position: absolute; left: 0; right: 0; bottom: 0; padding: 60px; }
-  #post .chip {
-    display: inline-flex; align-items: center; gap: 16px; margin-bottom: 28px;
-    background: rgba(12,10,9,0.55); border-radius: 999px; padding: 14px 26px 14px 16px;
-  }
-  #post .chip .handle { color: var(--ink); font-family: var(--sans); font-size: 31px; font-weight: 700; }
-  #post h2 {
-    margin: 0; font-family: var(--serif); font-weight: 800; font-size: 90px; line-height: 1.0;
-    letter-spacing: -1px; color: var(--ink); text-shadow: 0 3px 22px rgba(0,0,0,0.6);
-  }
-  #post h2 .accent { display: block; color: var(--orange); }
-  #post .sub { display: flex; align-items: flex-start; gap: 16px; margin-top: 28px; max-width: 92%; }
-  #post .sub .arrow { color: var(--orange); font-family: var(--sans); font-size: 31px; font-weight: 800; line-height: 1.2; }
-  #post .sub .txt { color: var(--ink); font-family: var(--sans); font-size: 33px; font-weight: 600; line-height: 1.25; text-shadow: 0 1px 10px rgba(0,0,0,0.5); }
-  #post .carousel {
-    position: absolute; right: 30px; top: 50%; transform: translateY(-50%);
-    width: 66px; height: 66px; border-radius: 50%; background: rgba(12,10,9,0.5);
-    display: flex; align-items: center; justify-content: center;
-  }
-  #post .page { position: absolute; right: 42px; bottom: 42px; color: var(--ink); opacity: 0.4; font-family: var(--sans); font-size: 22px; font-weight: 700; letter-spacing: 2px; }
+  /* Post node (1080x1350). #post is shown scaled; #measure is offscreen for auto-fit. */
+  .postnode { width: 1080px; height: 1350px; background: var(--bg); overflow: hidden; }
+  #post { position: absolute; top: 0; left: 0; transform-origin: top left; }
+  #measure { position: absolute; left: -99999px; top: 0; visibility: hidden; pointer-events: none; }
+  .postnode .hero { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; cursor: grab; }
+  .postnode .hero:active { cursor: grabbing; }
+  .postnode .darken { position: absolute; inset: 0; background: var(--bg); pointer-events: none; }
+  .postnode .placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #6b6560; font-size: 44px; text-align: center; padding: 0 80px; }
+  .postnode .scrim { position: absolute; inset: 0; pointer-events: none; }
+  .postnode .topbar { position: absolute; top: 0; left: 0; right: 0; padding: 48px 60px; display: flex; justify-content: space-between; align-items: center; pointer-events: none; }
+  .postnode .label { color: var(--ink); font-size: 22px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; text-shadow: 0 1px 8px rgba(0,0,0,0.5); }
+  .postnode .content { position: absolute; left: 0; right: 0; bottom: 0; padding: 60px; pointer-events: none; }
+  .postnode .chip { display: inline-flex; align-items: center; gap: 16px; margin-bottom: 28px; background: rgba(12,10,9,0.55); border-radius: 999px; padding: 14px 26px 14px 16px; }
+  .postnode .chip .handle { color: var(--ink); font-size: 31px; font-weight: 700; }
+  .postnode .hl { margin: 0; font-family: var(--serif); font-weight: 800; color: var(--ink); text-shadow: 0 3px 22px rgba(0,0,0,0.6); }
+  .postnode.cover .hl { font-size: 90px; line-height: 1.0; letter-spacing: -1px; }
+  .postnode.content .hl { font-size: 64px; line-height: 1.05; letter-spacing: -0.5px; }
+  .postnode .accent-block { display: block; color: var(--orange); }
+  .postnode .accent-inline { color: var(--orange); }
+  .postnode .sub { display: flex; align-items: flex-start; gap: 16px; margin-top: 28px; max-width: 92%; }
+  .postnode .sub .arrow { color: var(--orange); font-size: 31px; font-weight: 800; line-height: 1.2; }
+  .postnode .sub .txt { color: var(--ink); font-size: 33px; font-weight: 600; line-height: 1.25; text-shadow: 0 1px 10px rgba(0,0,0,0.5); }
+  .postnode .body { margin: 28px 0 0; font-size: 37px; font-weight: 500; line-height: 1.4; color: var(--ink); max-width: 94%; text-shadow: 0 1px 10px rgba(0,0,0,0.55); }
+  .postnode .carousel { position: absolute; right: 30px; top: 50%; transform: translateY(-50%); width: 66px; height: 66px; border-radius: 50%; background: rgba(12,10,9,0.5); display: flex; align-items: center; justify-content: center; }
+  .postnode .page { position: absolute; right: 42px; bottom: 42px; color: var(--ink); opacity: 0.4; font-size: 22px; font-weight: 700; letter-spacing: 2px; }
 
-  /* Controls column */
-  .controls { order: 1; padding: 28px; max-width: 720px; }
+  .controls { order: 1; padding: 28px; max-width: 760px; }
   .step { border: 1px solid var(--line); border-radius: 14px; padding: 22px; margin-bottom: 22px; background: var(--panel); }
   .step h3 { margin: 0 0 16px; font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 12px; }
   .step h3 .n { width: 28px; height: 28px; border-radius: 50%; background: var(--orange); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 800; }
   label { display: block; font-size: 14px; font-weight: 700; color: var(--muted); margin: 16px 0 7px; }
-  label:first-of-type { margin-top: 0; }
-  input[type=text], textarea {
-    width: 100%; background: var(--panel2); border: 1px solid var(--line); color: var(--ink);
-    border-radius: 10px; padding: 13px 14px; font-family: var(--sans); font-size: 16px; line-height: 1.35;
-  }
+  input[type=text], textarea { width: 100%; background: var(--panel2); border: 1px solid var(--line); color: var(--ink); border-radius: 10px; padding: 13px 14px; font-family: var(--sans); font-size: 16px; line-height: 1.35; }
   textarea { resize: vertical; min-height: 64px; }
   input::placeholder, textarea::placeholder { color: #6b6560; }
   input:focus, textarea:focus { outline: none; border-color: var(--orange); box-shadow: 0 0 0 3px rgba(255,99,13,0.25); }
-  .hintline { font-size: 13px; color: var(--muted); margin-top: 8px; }
+  input[type=range] { width: 100%; accent-color: var(--orange); margin-top: 6px; }
+  .hintline { font-size: 13px; color: var(--muted); margin-top: 10px; }
   .accent-orange { color: var(--orange); font-weight: 700; }
 
-  /* Drop zone */
-  #drop {
-    border: 2px dashed var(--line); border-radius: 12px; padding: 30px; text-align: center;
-    cursor: pointer; transition: border-color .15s, background .15s; background: var(--panel2);
-  }
+  #drop { border: 2px dashed var(--line); border-radius: 12px; padding: 28px; text-align: center; cursor: pointer; transition: border-color .15s, background .15s; background: var(--panel2); }
   #drop.over { border-color: var(--orange); background: rgba(255,99,13,0.08); }
   #drop strong { display: block; font-size: 16px; margin-bottom: 4px; }
   #drop small { color: var(--muted); }
-  #drop.has-image { padding: 16px; }
-  #drop .thumb { max-height: 120px; border-radius: 8px; }
+  #drop.has-image { padding: 14px; display: flex; align-items: center; gap: 14px; justify-content: center; }
+  #drop .thumb { max-height: 96px; border-radius: 8px; }
 
-  .row { display: flex; gap: 12px; flex-wrap: wrap; }
-  .row > div { flex: 1; min-width: 140px; }
-  .check { display: flex; align-items: center; gap: 10px; margin-top: 14px; cursor: pointer; font-size: 15px; font-weight: 600; }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; margin-bottom: 6px; }
+  .seg button { background: var(--panel2); color: var(--muted); border: none; padding: 11px 20px; font-family: var(--sans); font-weight: 800; font-size: 15px; cursor: pointer; }
+  .seg button.active { background: var(--orange); color: #fff; }
+
+  .row { display: flex; gap: 16px; flex-wrap: wrap; }
+  .row > div { flex: 1; min-width: 150px; }
+  .check { display: flex; align-items: center; gap: 10px; margin-top: 16px; cursor: pointer; font-size: 15px; font-weight: 600; }
   .check input { width: 20px; height: 20px; accent-color: var(--orange); }
 
-  /* Slide tabs */
   .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
   .tab { padding: 9px 14px; border-radius: 9px; border: 1px solid var(--line); background: var(--panel2); color: var(--ink); cursor: pointer; font-weight: 700; font-size: 14px; }
   .tab.active { border-color: var(--orange); background: rgba(255,99,13,0.14); }
   .tab.add { border-style: dashed; color: var(--muted); }
+  .tab small { color: var(--muted); font-weight: 600; }
 
-  button.primary, button.ghost {
-    font-family: var(--sans); font-weight: 800; font-size: 16px; border-radius: 11px;
-    padding: 15px 18px; cursor: pointer; border: 1px solid var(--line);
-  }
+  button.primary, button.ghost { font-family: var(--sans); font-weight: 800; font-size: 16px; border-radius: 11px; padding: 15px 18px; cursor: pointer; border: 1px solid var(--line); }
   button.primary { background: var(--orange); color: #fff; border-color: var(--orange); width: 100%; }
   button.primary:disabled { opacity: 0.45; cursor: not-allowed; }
   button.ghost { background: var(--panel2); color: var(--ink); width: 100%; margin-top: 10px; }
-  button.linklike { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 13px; text-decoration: underline; padding: 0; }
-
+  button.danger { background: none; border: 1px solid var(--line); color: var(--muted); cursor: pointer; font-size: 14px; font-weight: 700; padding: 9px 14px; border-radius: 9px; margin-top: 10px; }
   #status { margin-top: 12px; font-size: 14px; min-height: 20px; }
   #status.err { color: #ff8b6b; }
   #status.ok { color: #7bd88f; }
@@ -170,129 +117,160 @@
   </header>
 
   <div class="wrap">
-    <div class="preview">
-      <div class="stage" id="stage"><div id="post"></div></div>
-      <div class="hint">Previa ao vivo. O download e renderizado na qualidade final.</div>
-    </div>
-
     <div class="controls">
-      <!-- 1. Imagem -->
       <div class="step">
         <h3><span class="n">1</span> Imagem de fundo</h3>
         <div id="drop">
           <strong>Solte uma imagem aqui</strong>
-          <small>ou clique para escolher . a foto fica de fundo</small>
+          <small>ou clique para escolher</small>
         </div>
-        <input id="file" type="file" accept="image/*" hidden />
-        <div class="hintline">Dica do AI Collective: foto de gente (evento, bastidor), nao logo solto.</div>
+        <input id="file" type="file" accept="image/*" aria-label="Imagem de fundo" hidden />
+        <div class="hintline">Arraste a foto na previa pra enquadrar. Dica do AIC: foto de gente, nao logo solto.</div>
+        <label>Zoom</label>
+        <input id="zoom" type="range" min="1" max="2.5" step="0.05" value="1" aria-label="Zoom" />
+        <label>Escurecer fundo (pra texto legivel em foto clara)</label>
+        <input id="darken" type="range" min="0" max="0.7" step="0.05" value="0" aria-label="Escurecer fundo" />
       </div>
 
-      <!-- 2. Texto -->
       <div class="step">
         <h3><span class="n">2</span> Texto</h3>
-        <label>Manchete</label>
+        <div class="seg" id="layoutSeg">
+          <button data-l="cover" class="active" type="button">Capa</button>
+          <button data-l="content" type="button">Conteudo</button>
+        </div>
+        <label id="hlLabel">Manchete</label>
         <textarea id="headline" placeholder="Floripa entrou no mapa de uma das maiores comunidades de IA do"></textarea>
-        <label>Destaque em <span class="accent-orange">laranja</span> (a parte final)</label>
+        <label>Destaque em <span class="accent-orange">laranja</span></label>
         <input id="accent" type="text" placeholder="mundo." />
-        <label>Subtitulo (1 linha)</label>
-        <input id="subtitle" type="text" placeholder="Comunidade global de IA, agora com capitulo na ilha" />
-        <div class="hintline">Lidere com o mais ambicioso E verdadeiro. Curto rende melhor (ate ~4 linhas).</div>
+        <div id="coverFields">
+          <label>Subtitulo (1 linha)</label>
+          <input id="subtitle" type="text" placeholder="Comunidade global de IA, agora com capitulo na ilha" />
+        </div>
+        <div id="contentFields" style="display:none">
+          <label>Corpo (texto do slide)</label>
+          <textarea id="body" placeholder="Explique o ponto desse slide em uma ou duas frases curtas."></textarea>
+        </div>
+        <div class="hintline">A fonte da manchete se ajusta sozinha pra caber. Lidere com o mais ambicioso E verdadeiro.</div>
       </div>
 
-      <!-- 3. Detalhes -->
       <div class="step">
         <h3><span class="n">3</span> Detalhes</h3>
         <div class="row">
-          <div>
-            <label>Conta (@)</label>
-            <input id="handle" type="text" value="@aicollectivefloripa" />
-          </div>
-          <div>
-            <label>Edicao (canto)</label>
-            <input id="edition" type="text" placeholder="Junho 2026" />
-          </div>
+          <div><label>Conta (@)</label><input id="handle" type="text" value="@aicollectivefloripa" /></div>
+          <div><label>Edicao (canto)</label><input id="edition" type="text" placeholder="Junho 2026" /></div>
         </div>
         <label>Etiqueta do topo</label>
         <input id="kicker" type="text" value="AI Collective Florianopolis" />
-        <label class="check"><input id="arrow" type="checkbox" /> Mostrar seta de "arrasta" (carrossel)</label>
+        <label class="check"><input id="arrow" type="checkbox" /> Mostrar seta de "arrasta" (so no post unico)</label>
       </div>
 
-      <!-- 4. Carrossel -->
       <div class="step">
         <h3><span class="n">4</span> Carrossel (opcional)</h3>
         <div class="tabs" id="tabs"></div>
-        <div class="hintline">Adicione slides para fazer um carrossel. Cada slide tem sua imagem e manchete. O numero de pagina e a seta aparecem sozinhos.</div>
-        <button class="linklike" id="removeSlide" style="margin-top:10px; display:none;">remover este slide</button>
+        <div class="hintline">Adicione slides pra fazer um carrossel. Numero de pagina e seta aparecem sozinhos.</div>
+        <button class="danger" id="removeSlide" style="display:none;">remover este slide</button>
       </div>
 
-      <!-- 5. Baixar -->
       <div class="step">
         <h3><span class="n">5</span> Baixar</h3>
-        <button class="primary" id="download">Baixar este slide (PNG)</button>
-        <button class="ghost" id="downloadAll" style="display:none;">Baixar carrossel inteiro</button>
+        <button class="primary" id="download">Baixar post (PNG)</button>
+        <button class="ghost" id="downloadAll" style="display:none;">Baixar carrossel (.zip)</button>
         <div id="status"></div>
       </div>
     </div>
+
+    <div class="preview">
+      <div class="stage"><div id="post" class="postnode cover"></div></div>
+      <div class="hint">Previa ao vivo. O download e renderizado na qualidade final.</div>
+    </div>
   </div>
 
+  <div id="measure" class="postnode cover"></div>
+
 <script>
-// ----- The AI Collective overlay assets (mirror src/post + src/brand) -----
+// ----- AIC overlay assets (mirror src/post + src/brand) -----
 const C_MARK = '<svg viewBox="0 0 150 150" width="52" height="52" fill="none"><path fill="#FF630D" d="M130.8,116.48l-23.7-21.8c-2.07-1.91-5.17-2.09-7.51-.52-15.67,10.87-38.67,9.1-53.43-2.73-16.61-13.01-20.51-35.81-9.08-53.04,7.63-11.83,27.06-21.07,43.28-20.79,9.68,0,19.78,2.6,29.19,7.52,3.41,1.87,6.51,4.27,9.47,6.73l-.5,.46-14.84,13.65-.31,.28c-6.25-3.43-14.92-7.65-24.07-7.52-4.51,0-9.02,.79-13.24,2.4-3.67,1.41-8.77,3.8-11.15,7.09-1.31,1.82-.22,3.77,2,3.76,1.62-.03,3.26-1.06,4.75-1.61,5.5-2.05,11.37-3.06,17.24-3.06,8.33-.1,14.94,2.76,20.83,7.87,2.15,1.81,5.3,1.77,7.37-.13l23.7-21.81c1.07-.98,1.09-2.66,.05-3.67-2.11-2.05-4.34-3.96-6.68-5.7-12.63-9.46-28.78-14.78-44.33-14.78-21.64-.63-46.42,13.25-54.42,31.48-12.46,26.33,2.69,54.59,28.15,65.72,7.58,3.36,18.13,5.29,27.15,4.79,8.32-.45,15.83-3.18,22.52-7.7l.33,.3,15.36,14.13,.54,.49c-28.16,21.72-69.31,18.88-94-6.79-1.24-1.26-3.01-.84-3.93,.24-.01,.01-.02,.02-.03,.03-.59,.76-.69,1.76-.22,2.68,3.55,7.52,10.59,13,17.5,17.33,11.12,6.98,24.07,10.72,37.22,10.75,19.34-.09,40.9-9.06,54.82-22.4,1.08-1.03,1-2.69-.04-3.68h0Z"/></svg>';
 const SEAL = '<svg viewBox="0 0 24 24" width="31" height="31" fill="none"><path fill="#FF630D" d="M12 1.5l2.3 1.7 2.85-.2 1 2.65 2.65 1-.2 2.85L24 12l-1.7 2.3.2 2.85-2.65 1-1 2.65-2.85-.2L12 22.5l-2.3-1.7-2.85.2-1-2.65-2.65-1 .2-2.85L0 12l1.7-2.3-.2-2.85 2.65-1 1-2.65 2.85.2L12 1.5z"/><path fill="#fff" d="M10.6 15.2l-3-3 1.4-1.4 1.6 1.6 4-4 1.4 1.4-5.4 5.4z"/></svg>';
 const CHEVRON = '<svg viewBox="0 0 24 24" width="26" height="26" fill="none"><path d="M9 5l7 7-7 7" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-const esc = (s) => (s || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const COVER_SCRIM = 'linear-gradient(180deg, rgba(12,10,9,0.55) 0%, rgba(12,10,9,0) 18%, rgba(12,10,9,0) 36%, rgba(12,10,9,0.55) 58%, rgba(12,10,9,0.9) 80%, rgba(12,10,9,0.97) 100%)';
+const CONTENT_SCRIM = 'linear-gradient(180deg, rgba(12,10,9,0.5) 0%, rgba(12,10,9,0.35) 28%, rgba(12,10,9,0.78) 66%, rgba(12,10,9,0.95) 100%)';
+const MAXH = 860;
+const esc = (s) => (s || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 
-// ----- State -----
 const shared = { handle: "@aicollectivefloripa", kicker: "AI Collective Florianopolis", edition: "", arrow: false };
-let slides = [{ hero: "", headline: "", accent: "", subtitle: "" }];
+function newSlide() { return { hero: "", layout: "cover", headline: "", accent: "", subtitle: "", body: "", focusX: 0.5, focusY: 0.5, zoom: 1, darken: 0 }; }
+let slides = [newSlide()];
 let active = 0;
 
 const $ = (id) => document.getElementById(id);
-const post = $("post");
-const stage = $("stage");
+const post = $("post"), stage = $("post").parentElement, measure = $("measure");
+const isCarousel = () => slides.length > 1;
 
-function isCarousel() { return slides.length > 1; }
-
-function currentProps(i) {
+function rawProps(i) {
   const s = slides[i];
   return {
-    heroImage: s.hero,
-    headline: s.headline,
-    accent: s.accent,
-    subtitle: s.subtitle,
-    handle: shared.handle,
-    kicker: shared.kicker,
-    edition: shared.edition,
-    accentColor: "",
+    heroImage: s.hero, layout: s.layout, headline: s.headline, accent: s.accent,
+    subtitle: s.subtitle, body: s.body, handle: shared.handle, kicker: shared.kicker,
+    edition: shared.edition, accentColor: "",
     pageNumber: isCarousel() ? String(i + 1).padStart(2, "0") : "",
     showCarouselArrow: isCarousel() ? i < slides.length - 1 : shared.arrow,
+    heroFocusX: s.focusX, heroFocusY: s.focusY, heroZoom: s.zoom, darken: s.darken,
+    headlineSize: 0,
   };
 }
 
-function renderPreview() {
-  const p = currentProps(active);
-  const heroHtml = p.heroImage
-    ? '<img class="hero" src="' + p.heroImage + '" />'
+function buildInner(p) {
+  const isContent = p.layout === "content";
+  const hero = p.heroImage
+    ? '<img class="hero" draggable="false" src="' + p.heroImage + '" style="object-position:' + (p.heroFocusX*100) + '% ' + (p.heroFocusY*100) + '%; transform:scale(' + p.heroZoom + '); transform-origin:' + (p.heroFocusX*100) + '% ' + (p.heroFocusY*100) + '%" />'
     : '<div class="placeholder">Solte uma imagem de fundo</div>';
-  const scrim = 'linear-gradient(180deg, rgba(12,10,9,0.55) 0%, rgba(12,10,9,0) 18%, rgba(12,10,9,0) 36%, rgba(12,10,9,0.55) 58%, rgba(12,10,9,0.9) 80%, rgba(12,10,9,0.97) 100%)';
-  const accentHtml = p.accent ? '<span class="accent">' + esc(p.accent) + '</span>' : '';
-  const subHtml = p.subtitle ? '<div class="sub"><span class="arrow">&#8594;</span><span class="txt">' + esc(p.subtitle) + '</span></div>' : '';
-  const carouselHtml = p.showCarouselArrow ? '<div class="carousel">' + CHEVRON + '</div>' : '';
-  const pageHtml = p.pageNumber ? '<div class="page">' + esc(p.pageNumber) + '</div>' : '';
-  post.innerHTML =
-    heroHtml +
-    '<div class="scrim" style="background:' + scrim + '"></div>' +
-    '<div class="topbar"><span class="label">' + esc(p.kicker) + '</span><span class="label">' + esc(p.edition) + '</span></div>' +
-    '<div class="content">' +
-      '<div class="chip">' + C_MARK + '<span class="handle">' + esc(p.handle) + '</span>' + SEAL + '</div>' +
-      '<h2>' + esc(p.headline) + accentHtml + '</h2>' +
-      subHtml +
-    '</div>' +
-    carouselHtml + pageHtml;
+  const darken = p.darken > 0 ? '<div class="darken" style="opacity:' + p.darken + '"></div>' : "";
+  const scrim = '<div class="scrim" style="background:' + (isContent ? CONTENT_SCRIM : COVER_SCRIM) + '"></div>';
+  const hlStyle = p.headlineSize > 0 ? ' style="font-size:' + p.headlineSize + 'px"' : "";
+  let accentEl = "";
+  if (p.accent) accentEl = isContent ? ' <span class="accent-inline">' + esc(p.accent) + '</span>' : '<span class="accent-block">' + esc(p.accent) + '</span>';
+  const heading = '<h2 class="hl"' + hlStyle + '><span>' + esc(p.headline) + '</span>' + accentEl + '</h2>';
+  const extra = isContent
+    ? (p.body ? '<p class="body">' + esc(p.body) + '</p>' : "")
+    : (p.subtitle ? '<div class="sub"><span class="arrow">&#8594;</span><span class="txt">' + esc(p.subtitle) + '</span></div>' : "");
+  const content = '<div class="content"><div class="chip">' + C_MARK + '<span class="handle">' + esc(p.handle) + '</span>' + SEAL + '</div>' + heading + extra + '</div>';
+  const carousel = p.showCarouselArrow ? '<div class="carousel">' + CHEVRON + '</div>' : "";
+  const page = p.pageNumber ? '<div class="page">' + esc(p.pageNumber) + '</div>' : "";
+  return hero + darken + scrim + '<div class="topbar"><span class="label">' + esc(p.kicker) + '</span><span class="label">' + esc(p.edition) + '</span></div>' + content + carousel + page;
+}
+
+// Auto-fit: shrink the heading until the content block fits the safe height.
+function measureFitSize(p) {
+  const base = p.layout === "content" ? 64 : 90;
+  const min = p.layout === "content" ? 40 : 46;
+  measure.className = "postnode " + p.layout;
+  measure.innerHTML = buildInner({ ...p, headlineSize: 0 });
+  const hl = measure.querySelector(".hl"), content = measure.querySelector(".content");
+  if (!hl || !content) return 0;
+  let size = base;
+  hl.style.fontSize = size + "px";
+  while (content.offsetHeight > MAXH && size > min) {
+    size -= 4;
+    hl.style.fontSize = size + "px";
+  }
+  return size === base ? 0 : size;
+}
+
+function propsFor(i) {
+  const p = rawProps(i);
+  p.headlineSize = p.heroImage ? measureFitSize(p) : measureFitSize(p);
+  return p;
+}
+
+function renderPreview() {
+  const p = propsFor(active);
+  post.className = "postnode " + p.layout;
+  post.innerHTML = buildInner(p);
+  attachHeroDrag();
 }
 
 function fitStage() {
-  const w = Math.min(stage.parentElement.clientWidth - 0, 440);
+  const w = Math.min(stage.parentElement.clientWidth, 460);
   const s = w / 1080;
   post.style.transform = "scale(" + s + ")";
   stage.style.width = w + "px";
@@ -300,70 +278,63 @@ function fitStage() {
 }
 
 function renderTabs() {
-  const tabs = $("tabs");
-  tabs.innerHTML = "";
+  const tabs = $("tabs"); tabs.innerHTML = "";
   slides.forEach((s, i) => {
     const b = document.createElement("button");
     b.className = "tab" + (i === active ? " active" : "");
-    b.textContent = "Slide " + (i + 1);
-    b.onclick = () => { active = i; syncInputs(); renderPreview(); renderTabs(); };
+    b.innerHTML = "Slide " + (i + 1) + ' <small>' + (s.layout === "content" ? "cont." : "capa") + '</small>';
+    b.onclick = () => { active = i; syncInputs(); renderPreview(); renderTabs(); updateButtons(); };
     tabs.appendChild(b);
   });
   const add = document.createElement("button");
-  add.className = "tab add";
-  add.textContent = "+ slide";
-  add.onclick = () => {
-    slides.push({ hero: "", headline: "", accent: "", subtitle: "" });
-    active = slides.length - 1;
-    syncInputs(); renderPreview(); renderTabs(); updateButtons();
-  };
+  add.className = "tab add"; add.textContent = "+ slide";
+  add.onclick = () => { slides.push(newSlide()); active = slides.length - 1; syncInputs(); renderPreview(); renderTabs(); updateButtons(); };
   tabs.appendChild(add);
-  $("removeSlide").style.display = slides.length > 1 ? "inline" : "none";
+  $("removeSlide").style.display = slides.length > 1 ? "inline-block" : "none";
 }
 
 function updateButtons() {
-  const hasHero = !!slides[active].hero;
-  $("download").disabled = !hasHero;
+  $("download").disabled = !slides[active].hero;
+  $("download").textContent = isCarousel() ? "Baixar este slide (PNG)" : "Baixar post (PNG)";
   $("downloadAll").style.display = isCarousel() ? "block" : "none";
 }
 
-// Bind inputs to the active slide / shared state.
+function applyLayoutUI() {
+  const s = slides[active];
+  document.querySelectorAll("#layoutSeg button").forEach((b) => b.classList.toggle("active", b.dataset.l === s.layout));
+  $("coverFields").style.display = s.layout === "content" ? "none" : "block";
+  $("contentFields").style.display = s.layout === "content" ? "block" : "none";
+  $("hlLabel").textContent = s.layout === "content" ? "Titulo do slide" : "Manchete";
+}
+
 function syncInputs() {
   const s = slides[active];
-  $("headline").value = s.headline;
-  $("accent").value = s.accent;
-  $("subtitle").value = s.subtitle;
-  $("handle").value = shared.handle;
-  $("edition").value = shared.edition;
-  $("kicker").value = shared.kicker;
-  $("arrow").checked = shared.arrow;
-  paintDrop();
+  $("headline").value = s.headline; $("accent").value = s.accent;
+  $("subtitle").value = s.subtitle; $("body").value = s.body;
+  $("handle").value = shared.handle; $("edition").value = shared.edition;
+  $("kicker").value = shared.kicker; $("arrow").checked = shared.arrow;
+  $("zoom").value = s.zoom; $("darken").value = s.darken;
+  applyLayoutUI(); paintDrop();
 }
 
 function paintDrop() {
-  const drop = $("drop");
-  const hero = slides[active].hero;
-  if (hero) {
-    drop.classList.add("has-image");
-    drop.innerHTML = '<img class="thumb" src="' + hero + '" /><div><small>clique para trocar</small></div>';
-  } else {
-    drop.classList.remove("has-image");
-    drop.innerHTML = '<strong>Solte uma imagem aqui</strong><small>ou clique para escolher . a foto fica de fundo</small>';
-  }
+  const drop = $("drop"), hero = slides[active].hero;
+  if (hero) { drop.classList.add("has-image"); drop.innerHTML = '<img class="thumb" src="' + hero + '" /><small>clique para trocar</small>'; }
+  else { drop.classList.remove("has-image"); drop.innerHTML = '<strong>Solte uma imagem aqui</strong><small>ou clique para escolher</small>'; }
 }
 
-function on(id, ev, fn) { $(id).addEventListener(ev, fn); }
-["headline", "accent", "subtitle"].forEach((k) =>
-  on(k, "input", (e) => { slides[active][k] = e.target.value; renderPreview(); })
-);
-["handle", "kicker", "edition"].forEach((k) =>
-  on(k, "input", (e) => { shared[k] = e.target.value; renderPreview(); })
-);
+const on = (id, ev, fn) => $(id).addEventListener(ev, fn);
+["headline","accent","subtitle","body"].forEach((k) => on(k, "input", (e) => { slides[active][k] = e.target.value; renderPreview(); }));
+["handle","kicker","edition"].forEach((k) => on(k, "input", (e) => { shared[k] = e.target.value; renderPreview(); }));
 on("arrow", "change", (e) => { shared.arrow = e.target.checked; renderPreview(); });
+on("zoom", "input", (e) => { slides[active].zoom = Number(e.target.value); renderPreview(); });
+on("darken", "input", (e) => { slides[active].darken = Number(e.target.value); renderPreview(); });
+document.querySelectorAll("#layoutSeg button").forEach((b) => b.addEventListener("click", () => {
+  slides[active].layout = b.dataset.l; applyLayoutUI(); renderPreview(); renderTabs();
+}));
 on("removeSlide", "click", () => {
   if (slides.length <= 1) return;
-  slides.splice(active, 1);
-  active = Math.max(0, active - 1);
+  slides.splice(active, 1); active = Math.max(0, active - 1);
   syncInputs(); renderPreview(); renderTabs(); updateButtons();
 });
 
@@ -371,65 +342,117 @@ on("removeSlide", "click", () => {
 const drop = $("drop"), fileInput = $("file");
 function loadFile(file) {
   if (!file || !file.type.startsWith("image/")) return;
-  const reader = new FileReader();
-  reader.onload = () => { slides[active].hero = reader.result; paintDrop(); renderPreview(); updateButtons(); };
-  reader.readAsDataURL(file);
+  const r = new FileReader();
+  r.onload = () => { const s = slides[active]; s.hero = r.result; s.focusX = 0.5; s.focusY = 0.5; s.zoom = 1; paintDrop(); syncInputs(); renderPreview(); updateButtons(); };
+  r.readAsDataURL(file);
 }
 drop.addEventListener("click", () => fileInput.click());
 fileInput.addEventListener("change", (e) => loadFile(e.target.files[0]));
-["dragover", "dragenter"].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add("over"); }));
-["dragleave", "drop"].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.remove("over"); }));
+["dragover","dragenter"].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add("over"); }));
+["dragleave","drop"].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.remove("over"); }));
 drop.addEventListener("drop", (e) => loadFile(e.dataTransfer.files[0]));
 
-// Render one slide on the server and download the PNG.
-async function renderAndDownload(i, filename) {
-  const res = await fetch("/render", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ props: currentProps(i) }),
+// Drag the hero in the preview to reframe (sets object-position).
+let dragging = null;
+function attachHeroDrag() {
+  const hero = post.querySelector(".hero");
+  if (!hero) return;
+  hero.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
+    const s = slides[active];
+    dragging = { x: e.clientX, y: e.clientY, fx: s.focusX, fy: s.focusY, w: stage.clientWidth, h: stage.clientHeight };
+    hero.setPointerCapture(e.pointerId);
   });
-  if (!res.ok) {
-    let msg = "Erro ao renderizar.";
-    try { msg = (await res.json()).error || msg; } catch (e) {}
-    throw new Error(msg);
-  }
-  const blob = await res.blob();
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url; a.download = filename;
-  document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 4000);
+  hero.addEventListener("pointermove", (e) => {
+    if (!dragging) return;
+    const s = slides[active];
+    s.focusX = Math.min(1, Math.max(0, dragging.fx - (e.clientX - dragging.x) / dragging.w));
+    s.focusY = Math.min(1, Math.max(0, dragging.fy - (e.clientY - dragging.y) / dragging.h));
+    const img = post.querySelector(".hero");
+    if (img) { const pos = (s.focusX*100) + "% " + (s.focusY*100) + "%"; img.style.objectPosition = pos; img.style.transformOrigin = pos; }
+  });
+  const end = () => { dragging = null; };
+  hero.addEventListener("pointerup", end);
+  hero.addEventListener("pointercancel", end);
 }
 
 function setStatus(msg, kind) { const el = $("status"); el.textContent = msg; el.className = kind || ""; }
 
+async function renderBytes(i) {
+  const res = await fetch("/render", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ props: propsFor(i) }) });
+  if (!res.ok) { let m = "Erro ao renderizar."; try { m = (await res.json()).error || m; } catch (e) {} throw new Error(m); }
+  return new Uint8Array(await res.arrayBuffer());
+}
+function downloadBlob(blob, name) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a"); a.href = url; a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+
 on("download", "click", async () => {
   if (!slides[active].hero) return;
-  $("download").disabled = true;
-  setStatus("Renderizando na qualidade final...", "");
+  $("download").disabled = true; setStatus("Renderizando na qualidade final...", "");
   try {
+    const bytes = await renderBytes(active);
     const name = isCarousel() ? "post-" + String(active + 1).padStart(2, "0") + ".png" : "post.png";
-    await renderAndDownload(active, name);
+    downloadBlob(new Blob([bytes], { type: "image/png" }), name);
     setStatus("Pronto. Baixado: " + name, "ok");
   } catch (e) { setStatus(e.message, "err"); }
   $("download").disabled = false;
 });
 
 on("downloadAll", "click", async () => {
-  setStatus("Renderizando o carrossel...", "");
+  for (let i = 0; i < slides.length; i++) if (!slides[i].hero) { setStatus("O slide " + (i + 1) + " esta sem imagem.", "err"); return; }
+  $("downloadAll").disabled = true;
   try {
+    const files = [];
     for (let i = 0; i < slides.length; i++) {
-      if (!slides[i].hero) throw new Error("O slide " + (i + 1) + " esta sem imagem de fundo.");
       setStatus("Renderizando slide " + (i + 1) + " de " + slides.length + "...", "");
-      await renderAndDownload(i, "post-" + String(i + 1).padStart(2, "0") + ".png");
+      files.push({ name: "post-" + String(i + 1).padStart(2, "0") + ".png", data: await renderBytes(i) });
     }
-    setStatus("Carrossel pronto. " + slides.length + " imagens baixadas.", "ok");
+    setStatus("Empacotando o .zip...", "");
+    downloadBlob(makeZip(files), "carrossel-aicollective.zip");
+    setStatus("Carrossel pronto. " + slides.length + " slides no .zip.", "ok");
   } catch (e) { setStatus(e.message, "err"); }
+  $("downloadAll").disabled = false;
 });
 
+// ----- Minimal store-only ZIP (no dependency) -----
+let CRC;
+function crc32(u8) {
+  if (!CRC) { CRC = []; for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1); CRC[n] = c >>> 0; } }
+  let c = 0xFFFFFFFF;
+  for (let i = 0; i < u8.length; i++) c = (c >>> 8) ^ CRC[(c ^ u8[i]) & 0xFF];
+  return (c ^ 0xFFFFFFFF) >>> 0;
+}
+function makeZip(files) {
+  const enc = new TextEncoder(), parts = [], central = []; let offset = 0;
+  for (const f of files) {
+    const name = enc.encode(f.name), crc = crc32(f.data), size = f.data.length;
+    const lh = new DataView(new ArrayBuffer(30));
+    lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(8, 0, true);
+    lh.setUint32(14, crc, true); lh.setUint32(18, size, true); lh.setUint32(22, size, true);
+    lh.setUint16(26, name.length, true);
+    parts.push(new Uint8Array(lh.buffer), name, f.data);
+    const ch = new DataView(new ArrayBuffer(46));
+    ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true);
+    ch.setUint32(16, crc, true); ch.setUint32(20, size, true); ch.setUint32(24, size, true);
+    ch.setUint16(28, name.length, true); ch.setUint32(42, offset, true);
+    central.push(new Uint8Array(ch.buffer), name);
+    offset += 30 + name.length + size;
+  }
+  const cSize = central.reduce((a, b) => a + b.length, 0);
+  const eo = new DataView(new ArrayBuffer(22));
+  eo.setUint32(0, 0x06054b50, true); eo.setUint16(8, files.length, true); eo.setUint16(10, files.length, true);
+  eo.setUint32(12, cSize, true); eo.setUint32(16, offset, true);
+  return new Blob([...parts, ...central, new Uint8Array(eo.buffer)], { type: "application/zip" });
+}
+
 window.addEventListener("resize", fitStage);
-// Boot.
 syncInputs(); renderTabs(); renderPreview(); fitStage(); updateButtons();
+// Webfonts change text metrics, so re-measure the auto-fit once they are ready.
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => renderPreview());
 </script>
 </body>
 </html>

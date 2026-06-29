@@ -34,6 +34,12 @@ const { values } = parseArgs({
     color: { type: "string" }, // accent hex override
     page: { type: "string" }, // optional page number watermark
     carousel: { type: "boolean" }, // show the carousel ">" arrow
+    content: { type: "boolean" }, // content slide (heading + body) instead of cover
+    body: { type: "string" }, // body paragraph (content slide)
+    darken: { type: "string" }, // 0..1 extra darken for legibility
+    focusx: { type: "string" }, // 0..1 hero horizontal focus
+    focusy: { type: "string" }, // 0..1 hero vertical focus
+    zoom: { type: "string" }, // hero magnify (>= 1)
     out: { type: "string" },
   },
 });
@@ -63,17 +69,25 @@ async function resolveHero(token) {
 
 const heroImage = await resolveHero(values.hero);
 
+const num = (v, d) => (v === undefined ? d : Number(v));
 const inputProps = {
   heroImage,
+  layout: values.content ? "content" : "cover",
   headline: values.headline ?? "O algoritmo mudou.",
   accent: values.accent ?? "A comunidade não.",
   subtitle: values.subtitle ?? "Por que estar na sala importa mais que ter seguidores",
+  body: values.body ?? "",
   handle: values.handle ?? "@aicollectivefloripa",
   kicker: values.kicker ?? "AI Collective Florianópolis",
   edition: values.edition ?? "",
   accentColor: values.color ?? "",
   pageNumber: values.page ?? "",
   showCarouselArrow: Boolean(values.carousel),
+  heroFocusX: num(values.focusx, 0.5),
+  heroFocusY: num(values.focusy, 0.5),
+  heroZoom: num(values.zoom, 1),
+  darken: num(values.darken, 0),
+  headlineSize: 0,
 };
 
 const outDir = path.join(repoRoot, "out");

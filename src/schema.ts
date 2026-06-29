@@ -9,15 +9,24 @@ export const FPS = 30;
 export const POST_W = 1080;
 export const POST_H = 1350;
 
+// "cover" = the bold headline cover slide. "content" = a carousel content slide
+// (smaller heading + a body paragraph), same identity.
+export const layoutEnum = z.enum(["cover", "content"]);
+export type Layout = z.infer<typeof layoutEnum>;
+
 export const postSchema = z.object({
-  // Path relative to assets/ (staticFile), e.g. "samples/floripa-sunset.png".
+  // Path relative to assets/ (staticFile) OR a data: / http(s) URL (editor upload).
   heroImage: z.string(),
-  // Big white headline. Keep it punchy (covers are short).
+  // Slide layout.
+  layout: layoutEnum,
+  // Big white headline (cover) or the heading (content). Keep covers punchy.
   headline: z.string(),
   // Colored tail of the headline (the part in the brand accent). Can be empty.
   accent: z.string(),
-  // Smaller line under the headline (the dek). Can be empty.
+  // Smaller line under the headline (the dek, cover only). Can be empty.
   subtitle: z.string(),
+  // Body paragraph (content slides only). Can be empty.
+  body: z.string(),
   // @handle shown in the account chip.
   handle: z.string(),
   // Top-left label (chapter / brand line).
@@ -30,6 +39,13 @@ export const postSchema = z.object({
   pageNumber: z.string(),
   // Show the carousel ">" arrow on the right edge.
   showCarouselArrow: z.boolean(),
+  // Hero framing: object-position (0..1), magnify, and an extra darken overlay.
+  heroFocusX: z.number(),
+  heroFocusY: z.number(),
+  heroZoom: z.number(),
+  darken: z.number(),
+  // Headline size in px. 0 means "use the layout default" (auto-fit lives in the UI).
+  headlineSize: z.number(),
 });
 
 export type PostProps = z.infer<typeof postSchema>;
@@ -37,15 +53,22 @@ export type PostProps = z.infer<typeof postSchema>;
 // Defaults so `npm run studio` shows a real post with zero input.
 export const defaultPostProps: PostProps = {
   heroImage: "samples/floripa-sunset.png",
+  layout: "cover",
   headline: "Floripa entrou no mapa de uma das maiores comunidades de IA do",
   accent: "mundo.",
   subtitle: "Comunidade global de IA, agora com capítulo na ilha",
+  body: "",
   handle: "@aicollectivefloripa",
   kicker: "AI Collective Florianópolis",
   edition: "",
   accentColor: "",
   pageNumber: "",
   showCarouselArrow: true,
+  heroFocusX: 0.5,
+  heroFocusY: 0.5,
+  heroZoom: 1,
+  darken: 0,
+  headlineSize: 0,
 };
 
 // The three shapes a reel or slideshow can take.

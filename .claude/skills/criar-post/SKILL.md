@@ -46,6 +46,20 @@ Opcoes uteis:
 `--page "01"` numero de pagina (pra carrossel), em vez de `--carousel`.
 `--handle "@aicollectivefloripa"` e `--kicker "AI Collective Florianopolis"`.
 `--color "#FF630D"` troca a cor de destaque (padrao = laranja da marca).
+`--darken 0.2` escurece a foto (texto legivel em foto clara).
+`--focusx 0.5 --focusy 0.3 --zoom 1.2` enquadra a foto (0..1, e zoom >= 1).
+
+## Slide de conteudo (carrossel)
+Para um slide de conteudo (titulo menor + corpo de texto), use `--content` e `--body`:
+```bash
+node scripts/render-post.mjs --hero <foto> --content \
+  --headline "O que vai rolar no encontro" \
+  --body "Lightning talks, demos ao vivo e muito networking. Tudo de graca."
+```
+
+## Editor visual (mais facil que a CLI)
+`npm run ui` abre uma pagina pra soltar a foto, arrastar pra enquadrar, escrever,
+trocar capa/conteudo, e baixar o post (ou o carrossel inteiro em .zip). Sem chave.
 
 ## Exemplo real (verificado)
 Saida: `out/post-...png`, 1080x1350, identidade do AI Collective (serifa branca +
@@ -53,5 +67,5 @@ Saida: `out/post-...png`, 1080x1350, identidade do AI Collective (serifa branca 
 
 ## Observacoes
 - Formato: 1080x1350 (feed retrato 4:5). Para story/reel use a skill `criar-video`.
-- Manchete curta rende melhor. Acima de ~4 linhas a foto aparece menos.
-- Preview ao vivo pra ajustar texto: `npm run studio` (composicao "Post").
+- A fonte da manchete se ajusta sozinha pra caber (auto-fit no editor).
+- Preview ao vivo pra ajustar texto: `npm run ui` (editor) ou `npm run studio` (Remotion).

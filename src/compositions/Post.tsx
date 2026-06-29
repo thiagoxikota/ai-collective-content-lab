@@ -12,12 +12,28 @@ export const Post: React.FC<PostProps> = (props) => {
   const heroSrc = /^(data:|https?:)/.test(props.heroImage)
     ? props.heroImage
     : staticFile(props.heroImage);
+  const pos = `${props.heroFocusX * 100}% ${props.heroFocusY * 100}%`;
   return (
     <AbsoluteFill style={{ backgroundColor: BRAND.colors.bg }}>
-      <Img
-        src={heroSrc}
-        style={{ position: "absolute", width: "100%", height: "100%", objectFit: "cover" }}
-      />
+      {/* Hero, framed by object-position (pan) + scale (zoom). */}
+      <AbsoluteFill style={{ overflow: "hidden" }}>
+        <Img
+          src={heroSrc}
+          style={{
+            position: "absolute",
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            objectPosition: pos,
+            transform: `scale(${props.heroZoom})`,
+            transformOrigin: pos,
+          }}
+        />
+      </AbsoluteFill>
+      {/* Optional extra darken for legibility on bright photos. */}
+      {props.darken > 0 ? (
+        <AbsoluteFill style={{ backgroundColor: BRAND.colors.bg, opacity: props.darken }} />
+      ) : null}
       <PostOverlay {...props} />
     </AbsoluteFill>
   );

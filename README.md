@@ -16,8 +16,11 @@ npm run ui
 ```
 
 Abre uma pagina no navegador. Solte uma imagem, escreva a manchete, veja a previa
-ao vivo e baixe o PNG. Sem codigo, sem chave. Da pra fazer um post ou um carrossel
-inteiro (e so adicionar slides).
+ao vivo e baixe o PNG. Sem codigo, sem chave.
+
+- Arraste a foto na previa pra enquadrar. Zoom e "escurecer fundo" em sliders.
+- A fonte da manchete se ajusta sozinha pra caber (nunca estoura).
+- Carrossel: adicione slides, alterne entre "Capa" e "Conteudo" (titulo + corpo de texto), e baixe tudo num .zip.
 
 ---
 
