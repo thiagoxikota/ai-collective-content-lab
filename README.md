@@ -9,7 +9,19 @@ Plateia mista, gente que nao programa inclusa.
 
 ---
 
-## O caminho mais rapido (post, sem chave nenhuma)
+## Jeito mais facil: o editor visual
+
+```bash
+npm run ui
+```
+
+Abre uma pagina no navegador. Solte uma imagem, escreva a manchete, veja a previa
+ao vivo e baixe o PNG. Sem codigo, sem chave. Da pra fazer um post ou um carrossel
+inteiro (e so adicionar slides).
+
+---
+
+## O caminho mais rapido pelo Claude Code (post, sem chave nenhuma)
 
 Posts nao precisam de API. O render e local. Voce so precisa de uma foto.
 

@@ -13,9 +13,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import { parseArgs } from "node:util";
-import { bundle } from "@remotion/bundler";
-import { ensureBrowser, renderStill, selectComposition } from "@remotion/renderer";
 import { loadEnv, repoRoot } from "./lib/env.mjs";
+import { renderPostStill } from "./lib/render.mjs";
 import { assetRelative, downloadTo, outputPath } from "./lib/util.mjs";
 
 loadEnv();
@@ -87,22 +86,7 @@ console.log(`\nRenderizando post (1080x1350)...`);
 console.log(`  hero: ${heroImage}`);
 console.log(`  headline: ${inputProps.headline} ${inputProps.accent}`);
 
-await ensureBrowser();
-
-const serveUrl = await bundle({
-  entryPoint: path.join(repoRoot, "src", "index.ts"),
-  publicDir: assetsDir,
-});
-
-const composition = await selectComposition({ serveUrl, id: "Post", inputProps });
-
-await renderStill({
-  composition,
-  serveUrl,
-  output: outFile,
-  inputProps,
-  imageFormat: "png",
-});
+await renderPostStill(inputProps, outFile);
 
 console.log("\nPost pronto:");
 console.log("  arquivo: " + outFile + "\n");

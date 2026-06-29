@@ -6,6 +6,7 @@
   "license": "MIT",
   "scripts": {
     "setup": "bash scripts/setup.sh",
+    "ui": "node scripts/ui.mjs",
     "studio": "remotion studio",
     "post": "node scripts/render-post.mjs",
     "render": "remotion render Reel out/reel.mp4",

@@ -23,7 +23,25 @@ Isso instala tudo.
 
 ---
 
-## Passo 3. Abra a pasta no Claude Code
+## Passo 3 (jeito mais facil). Abra o editor visual
+
+```bash
+npm run ui
+```
+
+Abre uma pagina no navegador.
+
+Solte uma imagem.
+
+Escreva a manchete.
+
+Baixe o PNG.
+
+Sem codigo, sem chave.
+
+---
+
+## Passo 3 (alternativa). Abra a pasta no Claude Code
 
 Diga isto:
 
