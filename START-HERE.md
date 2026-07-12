@@ -7,7 +7,7 @@ O caminho mais curto. Uma acao por linha. Faca de cima para baixo.
 ## Passo 1. Baixe o projeto
 
 ```bash
-git clone <url-do-repo>
+git clone https://github.com/thiagoxikota/ai-collective-content-lab.git
 cd ai-collective-content-lab
 ```
 

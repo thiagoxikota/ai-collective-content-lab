@@ -1,5 +1,7 @@
 # AI Collective Content Lab
 
+**English:** see the [English version](#english-short-version) below.
+
 Um jeito simples de **criar conteudo com IA**: voce joga uma foto, escreve uma
 frase, e sai uma arte de post, carrossel ou reel com a identidade do **The AI
 Collective**. De graca e sem programar.
