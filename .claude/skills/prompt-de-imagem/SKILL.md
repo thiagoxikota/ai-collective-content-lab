@@ -10,14 +10,14 @@ description: >-
 # Prompt de imagem (escrever antes de gerar)
 
 Transforma uma ideia solta num prompt claro, que rende uma imagem melhor.
-Esta skill NAO gera a imagem. Ela monta o prompt e entao chama a skill `gerar-imagem`.
+Entrega o prompt. Use `gerar-imagem` apenas se a geração também estiver no pedido autorizado.
 
 ## Quando usar
 Antes de gerar, quando a ideia ainda esta vaga, ou quando a pessoa pede ajuda
 com a descricao. Gatilhos: "me ajuda com o prompt", "melhora esse prompt".
 
 ## A receita (6 partes)
-Monte o prompt juntando, nesta ordem:
+Use os critérios pertinentes à imagem; não é preciso preencher campos irrelevantes nem seguir uma ordem fixa:
 1. Sujeito. O que aparece. Seja concreto. ("um por do sol sobre o mar")
 2. Contexto. Onde, o entorno. ("morros de Florianopolis ao fundo, praia vazia")
 3. Estilo. Fotografico, ilustracao flat, 3D, aquarela, pixar, cinematografico.
@@ -32,9 +32,9 @@ Monte o prompt juntando, nesta ordem:
 
 ## Passo a passo
 1. Leia a ideia da pessoa.
-2. Preencha as 6 partes. O que faltar, sugira (sem inventar coisas que ela nao quer).
+2. Especifique apenas as escolhas visuais que ajudem o resultado; preserve as intenções dadas.
 3. Mostre o prompt final e o formato sugerido.
-4. Ja ofereca rodar a skill `gerar-imagem` com esse prompt.
+4. Se a geração já foi pedida, siga com `gerar-imagem`; caso contrário, entregue o prompt sem disparar serviço pago.
 
 ## Exemplo real
 Pessoa: "queria uma imagem de Floripa pro reel"
@@ -42,7 +42,7 @@ Prompt sugerido (vertical):
 > por do sol sobre o mar em Florianopolis, morros verdes ao fundo, praia tranquila,
 > estilo fotografico cinematografico, luz dourada de fim de tarde, plano aberto de
 > drone, alta qualidade, nitido
-Depois, gere:
+Se a geração estiver autorizada:
 ```bash
 node scripts/generate-image.mjs "por do sol sobre o mar em Florianopolis, morros verdes ao fundo, praia tranquila, estilo fotografico cinematografico, luz dourada de fim de tarde, plano aberto de drone, alta qualidade, nitido" --aspect vertical
 ```

@@ -29,7 +29,7 @@ divulgacao", "monta a arte do evento", "make an instagram post".
 3. Escolha 1 palavra ou frase pro destaque laranja (o `--accent`).
 4. Escreva 1 linha de subtitulo de apoio.
 5. Rode o comando. Sai um PNG em `out/`.
-6. Mostre o PNG. Antes de postar a legenda (caption), rode pela skill `humanizer` (regra do repo do chapter). Numeros: use o piso publicado (70k+), nunca o teto.
+6. Mostre o PNG. Antes de postar a legenda (caption), rode pela skill `humanizer` (regra do repo do chapter). Números: consulte a fonte atual datada do chapter em ai-collective; não reutilize contagens históricas deste exemplo como estado atual. Criar a arte não autoriza publicar ou enviar.
 
 ## Comando exato
 ```bash
